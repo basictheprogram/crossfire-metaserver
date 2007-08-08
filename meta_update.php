@@ -54,7 +54,6 @@ if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST['hostname']) {
     exit;
 }
 
-
 if (!$db=db_connect()) {
     log_message(LOG_ERROR, "Unable to connect to database\n");
     exit;
