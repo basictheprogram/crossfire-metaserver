@@ -32,7 +32,6 @@ if (!$db) {
     exit;
 }
 
-
 // Could be simpler to do a select * here, but
 // selecting only the fields we want, as unix format
 // for the data as last_update makes the code
