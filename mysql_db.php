@@ -84,6 +84,4 @@ function db_get_last_error($db)
 {
     return(mysqli_error($db));
 }
-
-
 ?>
