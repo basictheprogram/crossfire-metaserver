@@ -27,6 +27,10 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 require_once("common.php");
 
+<<<<<<< HEAD:html/meta_update.php
+=======
+
+>>>>>>> 073ce91 (Changes to get code working with php 7.0):meta_update.php
 // Check that user has set up there config file.  Note that the server will
 // see these messages - whether it logs them or not will depend on settings,
 // but that should let the server admin fix things up.
@@ -91,6 +95,7 @@ foreach (array_keys($_POST) as $key) {
     // Replace any newlines with spaces - makes future processing easier
     $our_post[$key] = str_replace("\n", " ", $_POST[$key]);
 
+<<<<<<< HEAD:html/meta_update.php
     // Escape the strings to prevent SQL injection
     $our_post[$key] = mysqli_real_escape_string($db, $our_post[$key]);
 }
@@ -98,6 +103,13 @@ foreach (array_keys($_POST) as $key) {
 $query="select * from servers where port=" . mysqli_real_escape_string($db, $our_post['port'])
     ." and hostname='" .mysqli_real_escape_string($db, $our_post['hostname']) . "'";
 error_log($query);
+=======
+    // Don't double escape the strings.
+    if (!get_magic_quotes_gpc()) $our_post[$key] = mysqli_real_escape_string($db, $our_post[$key]);
+}
+
+$query="select * from servers where port=" . mysqli_real_escape_string($db, $our_post['port']) . " and hostname='" .mysqli_real_escape_string($db, $our_post['hostname']) . "'";
+>>>>>>> 073ce91 (Changes to get code working with php 7.0):meta_update.php
 
 $qret = db_query($db, $query);
 
