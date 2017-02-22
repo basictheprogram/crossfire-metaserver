@@ -27,7 +27,6 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 require_once("common.php");
 
-
 // Check that user has set up there config file.  Note that the server will
 // see these messages - whether it logs them or not will depend on settings,
 // but that should let the server admin fix things up.
