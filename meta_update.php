@@ -43,10 +43,10 @@ $ip = gethostbyname($_POST['hostname']);
 // on the ip of the incoming connection does not match that specified
 // by the server, we reject this user - no spoofing of other servers
 // allowed.
-if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST[hostname]) {
+if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST['hostname']) {
     echo "neither forward nor reverse DNS look corresponds to incoming ip address.\n";
     echo "incoming ip: " . $_SERVER['REMOTE_ADDR'] . ", DNS of that: $hostname\n";
-    echo "User specified hostname: " . $_POST[hostname] . " IP of that hostname: $ip\n";
+    echo "User specified hostname: " . $_POST['hostname'] . " IP of that hostname: $ip\n";
     log_message(LOG_WARN, $_SERVER['REMOTE_ADDR'] . " does not have correct hostname set\n");
     exit;
 }
@@ -112,20 +112,20 @@ if (db_num_rows($qret)>1) {
 if (db_num_rows($qret)) {
     $qrow = db_fetch_assoc($qret);
     $update="update servers set hostname='". $our_post['hostname'] .
-	"', port='". $our_post['port'] . 
-	"', html_comment='". $our_post['html_comment'] . 
-	"', text_comment='". $our_post['text_comment'] . 
-	"', archbase='". $our_post['archbase'] . 
-	"', mapbase='". $our_post['mapbase'] . 
-	"', codebase='". $our_post['codebase'] . 
-	"', flags='". $our_post['flags'] . 
-	"', num_players='". $our_post['num_players'] . 
-	"', in_bytes='". $our_post['in_bytes'] . 
-	"', out_bytes='". $our_post['out_bytes'] . 
-	"', uptime='". $our_post['uptime'] . 
-	"', version='". $our_post['version'] . 
-	"', sc_version='". $our_post['sc_version'] . 
-	"', cs_version='". $our_post['cs_version'] . 
+	"', port='". $our_post['port'] .
+	"', html_comment='". $our_post['html_comment'] .
+	"', text_comment='". $our_post['text_comment'] .
+	"', archbase='". $our_post['archbase'] .
+	"', mapbase='". $our_post['mapbase'] .
+	"', codebase='". $our_post['codebase'] .
+	"', flags='". $our_post['flags'] .
+	"', num_players='". $our_post['num_players'] .
+	"', in_bytes='". $our_post['in_bytes'] .
+	"', out_bytes='". $our_post['out_bytes'] .
+	"', uptime='". $our_post['uptime'] .
+	"', version='". $our_post['version'] .
+	"', sc_version='". $our_post['sc_version'] .
+	"', cs_version='". $our_post['cs_version'] .
 	"', last_update=now() where entry=" . $qrow['entry'] . ";";
 } else {
     $update="insert into servers (hostname, port, html_comment, text_comment, " .
