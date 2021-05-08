@@ -43,10 +43,10 @@ $ip = gethostbyname($_POST['hostname']);
 // on the ip of the incoming connection does not match that specified
 // by the server, we reject this user - no spoofing of other servers
 // allowed.
-if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST[hostname]) {
+if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST['hostname']) {
     echo "neither forward nor reverse DNS look corresponds to incoming ip address.\n";
     echo "incoming ip: " . $_SERVER['REMOTE_ADDR'] . ", DNS of that: $hostname\n";
-    echo "User specified hostname: " . $_POST[hostname] . " IP of that hostname: $ip\n";
+    echo "User specified hostname: " . $_POST['hostname'] . " IP of that hostname: $ip\n";
     log_message(LOG_WARN, $_SERVER['REMOTE_ADDR'] . " does not have correct hostname set\n");
     exit;
 }
