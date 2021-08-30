@@ -35,7 +35,7 @@ Steps to set up a metaserver instance:
 	  `in_bytes` int(11),
 	  `out_bytes` int(11),
 	  `uptime` int(11),
-	  `version` varchar(20),
+	  `version` varchar(25),
 	  `sc_version` varchar(20),
 	  `cs_version` varchar(20),
 	  `last_update` datetime,
