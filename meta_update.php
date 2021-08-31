@@ -149,10 +149,12 @@ if (db_num_rows($qret)) {
 	"now() );";
 }
 
-// Not really a query, but updat
+// Not really a query, but update
 $result = db_query($db, $update);
 if (!$result) {
-    log_message(LOG_ERROR, "Update/insert failed: $query\n");
+    // Get an error message from the database engine, since its way easier to troubleshoot that way.
+    log_message(LOG_ERROR, "Update/insert failed: $update\n".
+        db_get_last_error($db) . "\n");
 }
 
 db_close($db);
