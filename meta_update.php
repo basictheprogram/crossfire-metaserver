@@ -23,12 +23,15 @@
 // meta_update takes the HTTP_POST requests from the server, does sanity
 // checking, and updates the database files.
 
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 require_once("common.php");
 
 
 // Check that user has set up there config file.  Note that the server will
 // see these messages - whether it logs them or not will depend on settings,
 // but that should let the server admin fix things up.
+
 if ($_POST['hostname'] == "put.your.hostname.here") {
     echo "You have not properly set up your metaserver2 configuration file - hostname is set to default\n";
     exit;
@@ -43,13 +46,15 @@ $ip = gethostbyname($_POST['hostname']);
 // on the ip of the incoming connection does not match that specified
 // by the server, we reject this user - no spoofing of other servers
 // allowed.
-if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST[hostname]) {
+
+if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST['hostname']) {
     echo "neither forward nor reverse DNS look corresponds to incoming ip address.\n";
     echo "incoming ip: " . $_SERVER['REMOTE_ADDR'] . ", DNS of that: $hostname\n";
-    echo "User specified hostname: " . $_POST[hostname] . " IP of that hostname: $ip\n";
+    echo "User specified hostname: " . $_POST['hostname'] . " IP of that hostname: $ip\n";
     log_message(LOG_WARN, $_SERVER['REMOTE_ADDR'] . " does not have correct hostname set\n");
     exit;
 }
+
 
 if (!$db=db_connect()) {
     log_message(LOG_ERROR, "Unable to connect to database\n");
@@ -93,18 +98,20 @@ foreach (array_keys($_POST) as $key) {
     if (!get_magic_quotes_gpc()) $our_post[$key] = mysqli_real_escape_string($db, $our_post[$key]);
 }
 
-$query="select * from servers where port=" . mysqli_real_escape_string($db, $our_post['port']) . " and hostname='" .mysqli_real_escape_string($db, $our_post['hostname']) . "'";
+$query="select * from servers where port=" . mysqli_real_escape_string($db, $our_post['port'])
+    ." and hostname='" .mysqli_real_escape_string($db, $our_post['hostname']) . "'";
+error_log($query);
 
 $qret = db_query($db, $query);
 
 // This really shouldn't happen, but might as well log for if it does.
 if (db_num_rows($qret)>1) {
     log_message(LOG_ERROR, "Multiple matches for " . $our_post['hostname'] . ":" .
-		$our_post['port'] . "\n");
+                $our_post['port'] . "\n");
 }
 
 // Got match rows - this must be an update.
-// The use of mysql_real_escape_string() may seem excessive, since some of
+// The use of mysqli_real_escape_string() may seem excessive, since some of
 // these values are supposed to be integers.  But it is potentially
 // untrusted severs sending us all this data, and it is sent as strings,
 // so better to be safe than sorry.
@@ -149,10 +156,11 @@ if (db_num_rows($qret)) {
 	"now() );";
 }
 
-// Not really a query, but updat
+// Not really a query, but update
 $result = db_query($db, $update);
 if (!$result) {
     log_message(LOG_ERROR, "Update/insert failed: $query\n");
+    error_log("Update/insert failed: ". $query);
 }
 
 db_close($db);
