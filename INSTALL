@@ -28,7 +28,7 @@ Steps to set up a metaserver instance:
 	  `html_comment` varchar(1024),
 	  `text_comment` varchar(256),
 	  `archbase` varchar(64),
-	  `mapbase` varchar(20),
+	  `mapbase` varchar(64),
 	  `codebase` varchar(64),
 	  `flags` varchar(20),
 	  `num_players` int(11),
