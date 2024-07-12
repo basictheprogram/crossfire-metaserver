@@ -93,8 +93,8 @@ foreach (array_keys($_POST) as $key) {
     // Replace any newlines with spaces - makes future processing easier
     $our_post[$key] = str_replace("\n", " ", $_POST[$key]);
 
-    // Don't double escape the strings.
-    if (!get_magic_quotes_gpc()) $our_post[$key] = mysqli_real_escape_string($db, $our_post[$key]);
+    // Escape the strings to prevent SQL injection
+    $our_post[$key] = mysqli_real_escape_string($db, $our_post[$key]);
 }
 
 $query="select * from servers where port=" . mysqli_real_escape_string($db, $our_post['port'])
