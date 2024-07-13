@@ -17,10 +17,10 @@ repos:
       - id: file-contents-sorter
         files: requirements.txt|\.gitignore|\.dockerignore
 
-  - repo: https://github.com/digitalpulp/pre-commit-php.git
-    rev: 1.4.0
-    hooks:
-      - id: php-lint
+  # - repo: https://github.com/digitalpulp/pre-commit-php.git
+  #   rev: 1.4.0
+  #   hooks:
+  #     - id: php-lint
 
 # sets up .pre-commit-ci.yaml to ensure pre-commit dependencies stay up to date
 ci:

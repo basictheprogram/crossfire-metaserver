@@ -61,7 +61,7 @@ each on its own newline.  The server makes sure there are no newlines
 in any of the strings (the update script replaces newlines with spaces).
 The variables are the same as in the POST updates above.
 
-To make parsing a bit easier, each block of data is contained in a 
+To make parsing a bit easier, each block of data is contained in a
 START_SERVER_DATA/END_SERVER_DATA block.  For example:
 
 START_SERVER_DATA
