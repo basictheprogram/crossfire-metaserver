@@ -38,26 +38,26 @@ define ("DB_USER", "metaserver");
 define ("DB_PWD", "metaserver");
 define ("DB_NAME", "metaserver");
 
-	
+
 // Connect to a host and select the specified table
 function db_connect()
-{	
+{
     $link = mysqli_connect(DB_HOST, DB_USER, DB_PWD)
 	    or die("Could not connect to " . DB_HOST . " as " . DB_USER . " with password\n");
 
     mysqli_select_db($link, DB_NAME)
 	    or die("Could not select database " . DB_NAME);
-				
+
     return $link;
 }
-	
+
 // Close a connection to a host
 function db_close($link)
-{	
+{
     // Closing connection
     mysqli_close($link);
 }
-	
+
 // Make a query
 function db_query($link, $query)
 {
