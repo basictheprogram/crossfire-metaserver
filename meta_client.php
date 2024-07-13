@@ -30,7 +30,7 @@ if (!$db=db_connect()) {
     exit;
 }
 
-// Could be simpler to do a select * here, but 
+// Could be simpler to do a select * here, but
 // selecting only the fields we want, as unix format
 // for the data as last_update makes the code
 // below simpler (don't have to special handle

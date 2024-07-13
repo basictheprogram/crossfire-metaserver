@@ -33,16 +33,16 @@
 // each query being its own function here - I'm not
 // sure that would be worthwhile.
 
-define ("DB_HOST", "localhost");
-define ("DB_USER", "metaserver");
-define ("DB_PWD", "metaserver");
-define ("DB_NAME", "metaserver");
+define("DB_HOST", getenv('DB_HOST') ?: 'localhost');
+define("DB_USER", getenv('DB_USER') ?: 'metaserver');
+define("DB_PWD", getenv('DB_PWD') ?: 'metaserver');
+define("DB_NAME", getenv('DB_NAME') ?: 'metaserver');
 
 
 // Connect to a host and select the specified table
 function db_connect()
 {
-    $link = mysql_connect(DB_HOST, DB_USER, DB_PWD)
+    $link = mysqli_connect(DB_HOST, DB_USER, DB_PWD)
 	    or die("Could not connect to " . DB_HOST . " as " . DB_USER . " with password\n");
 
     mysqli_select_db($link, DB_NAME)
@@ -78,5 +78,10 @@ function db_num_rows($qlist)
 	return(mysqli_num_rows($qlist));
 }
 
-
+// Gets the last error the MySQL engine created.
+// Parameter is the db connection from db_connect()
+function db_get_last_error($db)
+{
+    return(mysqli_error($db));
+}
 ?>
