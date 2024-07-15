@@ -27,6 +27,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 require_once("common.php");
 
+
 // Check that user has set up there config file.  Note that the server will
 // see these messages - whether it logs them or not will depend on settings,
 // but that should let the server admin fix things up.
@@ -52,6 +53,7 @@ if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST['hostname']) {
     log_message(LOG_WARN, $_SERVER['REMOTE_ADDR'] . " does not have correct hostname set\n");
     // exit;
 }
+
 
 if (!$db=db_connect()) {
     log_message(LOG_ERROR, "Unable to connect to database\n");
