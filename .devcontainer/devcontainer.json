@@ -1,0 +1,28 @@
+{
+  "name": "crossfire-metaserver",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "vscode",
+  "workspaceFolder": "/workspaces",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscode.html",
+        "vscode.css-language-features",
+        "dbaeumer.vscode-eslint",
+        "ms-azuretools.vscode-docker",
+        "yzhang.markdown-all-in-one",
+        "github.copilot",
+        "tomoki1207.pdf",
+        "eamodio.gitlens",
+        "formulahendry.auto-close-tag",
+        "ecmel.vscode-html-css",
+        "esbenp.prettier-vscode",
+        "pranaygp.vscode-css-peek",
+        "formulahendry.auto-rename-tag",
+        "stylelint.vscode-stylelint"
+      ]
+    }
+  },
+  "remoteUser": "you",
+  "postCreateCommand": "./.devcontainer/postCreateCommand.sh"
+}

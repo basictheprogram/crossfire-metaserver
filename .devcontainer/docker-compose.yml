@@ -1,0 +1,57 @@
+---
+services:
+  vscode:
+    container_name: crossfire-metaserver-vscode
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspaces:cached
+    command: sleep infinity
+    networks:
+      - devel
+
+  mysql:
+    container_name: crossfire-metaserver-mysql
+    image: mysql:8.0
+    restart: unless-stopped
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-metaserver}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-metaserver}
+      - MYSQL_USER=${MYSQL_USER:-metaserver}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-metaserver}
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "3306:3306"
+    networks:
+      - devel
+
+  www:
+    container_name: crossfire-metaserver-www
+    build:
+      context: ../docker/www
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ../html:/var/www/html/:cached
+    environment:
+      - DB_HOST=${DB_HOST:-mysql}
+      - DB_USER=${DB_USER:-metaserver}
+      - DB_PWD=${DB_PWD:-metaserver}
+      - DB_NAME=${DB_NAME:-metaserver}
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - devel
+
+networks:
+  devel:
+    name: devel

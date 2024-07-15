@@ -33,10 +33,10 @@
 // each query being its own function here - I'm not
 // sure that would be worthwhile.
 
-define ("DB_HOST", "localhost");
-define ("DB_USER", "metaserver");
-define ("DB_PWD", "metaserver");
-define ("DB_NAME", "metaserver");
+define("DB_HOST", getenv('DB_HOST') ?: 'localhost');
+define("DB_USER", getenv('DB_USER') ?: 'metaserver');
+define("DB_PWD", getenv('DB_PWD') ?: 'metaserver');
+define("DB_NAME", getenv('DB_NAME') ?: 'metaserver');
 
 
 // Connect to a host and select the specified table
