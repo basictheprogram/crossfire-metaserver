@@ -17,24 +17,24 @@ Steps to set up a metaserver instance:
 
 4) Create the tables:
    mysql> CREATE TABLE `blacklist` (
-	  `entry` int(11) NOT NULL auto_increment,
+	  `entry` int NOT NULL auto_increment,
 	  `hostname` varchar(80),
 	  PRIMARY KEY  (`entry`))
 
    mysql> CREATE TABLE `servers` (
-	  `entry` int(11) NOT NULL auto_increment,
+	  `entry` int NOT NULL auto_increment,
 	  `hostname` varchar(80),
-	  `port` int(11),
+	  `port` int,
 	  `html_comment` varchar(1024),
 	  `text_comment` varchar(256),
 	  `archbase` varchar(64),
 	  `mapbase` varchar(64),
 	  `codebase` varchar(64),
 	  `flags` varchar(20),
-	  `num_players` int(11),
-	  `in_bytes` int(11),
-	  `out_bytes` int(11),
-	  `uptime` int(11),
+	  `num_players` int,
+	  `in_bytes` int,
+	  `out_bytes` int,
+	  `uptime` int,
 	  `version` varchar(64),
 	  `sc_version` varchar(20),
 	  `cs_version` varchar(20),
