@@ -2,7 +2,11 @@
   "name": "crossfire-metaserver",
   "dockerComposeFile": ["docker-compose.yml"],
   "service": "vscode",
+<<<<<<< HEAD
   "workspaceFolder": "/workspace",
+=======
+  "workspaceFolder": "/workspaces",
+>>>>>>> dfdac81 (feat: Add development container setup with Docker and VSCode)
   "customizations": {
     "vscode": {
       "extensions": [
@@ -19,6 +23,7 @@
         "esbenp.prettier-vscode",
         "pranaygp.vscode-css-peek",
         "formulahendry.auto-rename-tag",
+<<<<<<< HEAD
         "stylelint.vscode-stylelint",
         "humao.rest-client",
         "ms-vscode.makefile-tools"
@@ -26,5 +31,12 @@
     }
   },
   "remoteUser": "vscode",
+=======
+        "stylelint.vscode-stylelint"
+      ]
+    }
+  },
+  "remoteUser": "you",
+>>>>>>> dfdac81 (feat: Add development container setup with Docker and VSCode)
   "postCreateCommand": "./.devcontainer/postCreateCommand.sh"
 }

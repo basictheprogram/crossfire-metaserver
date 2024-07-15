@@ -2,6 +2,7 @@
 
 set -e
 
+<<<<<<< HEAD
 timezone_setup() {
     local TZ=${TZ}
 
@@ -33,11 +34,23 @@ echo "==> Install linux development tools"
 #
 timezone_setup
 
+=======
+# Load environment variables from .env file
+#
+echo "==> Load environment variables from .env file"
+if [ -f ".devcontainer/.env" ]; then
+    set -o allexport
+    source .devcontainer/.env
+    set +o allexport
+fi
+
+>>>>>>> dfdac81 (feat: Add development container setup with Docker and VSCode)
 echo "==> Customize git user configuration"
 git config --global core.eol lf
 git config --global core.autocrlf false
 git config --global http.sslVerify false
 git config --global core.editor "code --wait"
+<<<<<<< HEAD
 git config --global --add safe.directory /workspace
 
 # Customize git user configuration on your branch
@@ -46,4 +59,14 @@ echo "==> Setting git user.name: '${GIT_USER_EMAIL}'"
 git config --global user.email "${GIT_USER_EMAIL}"
 
 echo "==> Setting git user.email: '${GIT_USER_NAME}'"
+=======
+git config --global --add safe.directory /workspaces
+
+# Set git user.email
+echo "==> Setting git user.email: '${GIT_USER_EMAIL}'"
+git config --global user.email "${GIT_USER_EMAIL}"
+
+# Set git user.name
+echo "==> Setting git user.name: '${GIT_USER_NAME}'"
+>>>>>>> dfdac81 (feat: Add development container setup with Docker and VSCode)
 git config --global user.name "${GIT_USER_NAME}"
