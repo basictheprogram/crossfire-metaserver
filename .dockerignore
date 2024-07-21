@@ -1,0 +1,12 @@
+.*_cache
+.DS_Store
+.env
+.git
+.github
+.travis.yml
+.vscode
+__pycache__
+build*
+coverage-report
+mysql-data
+postgres-data
