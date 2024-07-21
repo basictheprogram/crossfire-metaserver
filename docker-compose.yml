@@ -1,16 +1,5 @@
 ---
 services:
-  vscode:
-    container_name: crossfire-metaserver-vscode
-    build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
-    volumes:
-      - ..:/workspaces:cached
-    command: sleep infinity
-    networks:
-      - devel
-
   mysql:
     container_name: crossfire-metaserver-mysql
     image: mysql:8.0
@@ -31,18 +20,18 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - devel
+      - production
 
   www:
     container_name: crossfire-metaserver-www
     build:
-      context: ../docker/www
+      context: ./docker/www
       dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
       - mysql
     volumes:
-      - ../html:/var/www/html/:cached
+      - ./html:/var/www/html/:cached
     environment:
       - DB_HOST=${DB_HOST:-mysql}
       - DB_USER=${DB_USER:-metaserver}
@@ -52,8 +41,28 @@ services:
       - "80:80"
       - "443:443"
     networks:
-      - devel
+      - production
+
+  certbot:
+    container_name: crossfire-metaserver-certbot
+    build:
+      context: ./docker/certbot
+      dockerfile: Dockerfile
+    entrypoint: []
+    volumes:
+      - /opt/docker/portal/www:/var/www/html/
+      - /opt/docker/portal/letsencrypt:/etc/letsencrypt
+      # - /opt/docker/portal/static:/vol/static
+      # - /opt/docker/portal/proxy:/vol/proxy
+      # - /opt/docker/portal/logs/letsencrypt:/var/log/letsencrypt
+    environment:
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL:-webmaster@localhost}
+      - CERTBOT_DOMAIN=${CERTBOT_DOMAIN:-localhost}
+    restart: "no"
+    networks:
+      - production
 
 networks:
-  devel:
-    name: devel
+  production:
+    name: production
+    driver: bridge
