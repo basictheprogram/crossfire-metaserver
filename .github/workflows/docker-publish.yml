@@ -6,11 +6,11 @@ on:
       - vscode-devcontainer
   pull_request:
     branches:
-      - vscode-devcontainer
+      - main
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-jammy
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
