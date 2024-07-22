@@ -30,12 +30,12 @@ jobs:
 
     - name: Tag Docker image
       run: |
-        IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver
+        IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver_www
         IMAGE_TAG=latest
-        docker tag crossfire-metaserver $IMAGE_NAME:$IMAGE_TAG
+        docker tag crossfire-metaserver_www $IMAGE_NAME:$IMAGE_TAG
 
     - name: Push Docker image
       run: |
-        IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver
+        IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver_www
         IMAGE_TAG=latest
         docker push $IMAGE_NAME:$IMAGE_TAG
