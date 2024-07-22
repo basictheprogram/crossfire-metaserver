@@ -28,14 +28,11 @@ jobs:
     - name: Build Docker image
       run: docker-compose -f docker-compose.yml build
 
-    - name: Tag Docker image
+    - name: Tag and Push Docker images
       run: |
-        IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver_www
-        IMAGE_TAG=latest
-        docker tag crossfire-metaserver_www $IMAGE_NAME:$IMAGE_TAG
-
-    - name: Push Docker image
-      run: |
-        IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver_www
-        IMAGE_TAG=latest
-        docker push $IMAGE_NAME:$IMAGE_TAG
+        for SERVICE in crossfire-metaserver_www crossfire-metaserver_mysql; do
+          IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/$SERVICE
+          IMAGE_TAG=latest
+          docker tag $SERVICE $IMAGE_NAME:$IMAGE_TAG
+          docker push $IMAGE_NAME:$IMAGE_TAG
+        done

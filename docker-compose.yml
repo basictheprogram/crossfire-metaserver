@@ -52,9 +52,6 @@ services:
     volumes:
       - /opt/docker/portal/www:/var/www/html/
       - /opt/docker/portal/letsencrypt:/etc/letsencrypt
-      # - /opt/docker/portal/static:/vol/static
-      # - /opt/docker/portal/proxy:/vol/proxy
-      # - /opt/docker/portal/logs/letsencrypt:/var/log/letsencrypt
     environment:
       - CERTBOT_EMAIL=${CERTBOT_EMAIL:-webmaster@localhost}
       - CERTBOT_DOMAIN=${CERTBOT_DOMAIN:-localhost}
