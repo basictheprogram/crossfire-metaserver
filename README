@@ -36,6 +36,9 @@ meta_update.php: Script that the server uses (via HTTP_POST) to update
 mysql_db.php: File that provides wrapper functions around the mysql
   calls.
 
+CRITICAL: It is highly recommend to use a unique and complex password for the MySQL database
+once the initial setup and testing is completed!
+
 COPYRIGHT:
 
     Copyright (C) 2007 Mark Wedel & Crossfire Development Team
