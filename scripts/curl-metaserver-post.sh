@@ -1,6 +1,6 @@
 #!/bin/bash
 
-curl -X POST http://www/meta_update.php \
+curl -X POST http://cf-metaserver.cf.real-time.com/meta_update.php \
      -d "hostname=localhost" \
      -d "port=8080" \
      -d "html_comment=This is an HTML comment" \

@@ -26,3 +26,7 @@ CREATE TABLE `servers` (
 	  `last_update` datetime,
 	  PRIMARY KEY  (`entry`)
 );
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4e6b0639945dd0b8a94da5e2513773b1e19e197b
