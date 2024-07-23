@@ -30,7 +30,7 @@ jobs:
 
     - name: Tag and Push Docker images
       run: |
-        for SERVICE in crossfire-metaserver_www crossfire-metaserver_mysql; do
+        for SERVICE in crossfire-metaserver_www; do
           IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/$SERVICE
           IMAGE_TAG=latest
           docker tag $SERVICE $IMAGE_NAME:$IMAGE_TAG

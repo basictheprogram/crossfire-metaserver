@@ -31,7 +31,7 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ./html:/var/www/html/:cached
+      - ../html:/var/www/html/:cached
     environment:
       - DB_HOST=${DB_HOST:-mysql}
       - DB_USER=${DB_USER:-metaserver}
@@ -50,7 +50,7 @@ services:
       dockerfile: Dockerfile
     entrypoint: []
     volumes:
-      - /opt/docker/portal/www:/var/www/html/
+      - ../html:/var/www/html/:cached
       - /opt/docker/portal/letsencrypt:/etc/letsencrypt
     environment:
       - CERTBOT_EMAIL=${CERTBOT_EMAIL:-webmaster@localhost}
