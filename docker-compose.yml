@@ -5,13 +5,13 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     volumes:
-      - ./.devcontainer/mysql-data:/var/lib/mysql
+      - crossfire-metaserver-mysql-data:/var/lib/mysql
       - ./.devcontainer/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-metaserver}
-      - MYSQL_DATABASE=${MYSQL_DATABASE:-metaserver}
-      - MYSQL_USER=${MYSQL_USER:-metaserver}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-metaserver}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"]
       interval: 30s
@@ -24,19 +24,17 @@ services:
 
   www:
     container_name: crossfire-metaserver-www
-    build:
-      context: ./docker/www
-      dockerfile: Dockerfile
+    image: basictheprogram/crossfire-metaserver_www::latest
     restart: unless-stopped
     depends_on:
       - mysql
     volumes:
-      - ./html:/var/www/html/:cached
+      - crossfire-metaserver-html-files:/var/www/html/:cached
     environment:
-      - DB_HOST=${DB_HOST:-mysql}
-      - DB_USER=${DB_USER:-metaserver}
-      - DB_PWD=${DB_PWD:-metaserver}
-      - DB_NAME=${DB_NAME:-metaserver}
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PWD=${DB_PWD}
+      - DB_NAME=${DB_NAME}
     ports:
       - "80:80"
       - "443:443"
@@ -50,11 +48,11 @@ services:
       dockerfile: Dockerfile
     entrypoint: []
     volumes:
-      - ./html:/var/www/html/:cached
+      - crossfire-metaserver-html-files:/var/www/html/:cached
       - /opt/docker/portal/letsencrypt:/etc/letsencrypt
     environment:
-      - CERTBOT_EMAIL=${CERTBOT_EMAIL:-webmaster@localhost}
-      - CERTBOT_DOMAIN=${CERTBOT_DOMAIN:-localhost}
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
+      - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
     restart: "no"
     networks:
       - production
@@ -63,3 +61,9 @@ networks:
   production:
     name: production
     driver: bridge
+
+volumes:
+  crossfire-metaserver-mysql-data:
+    driver: local
+  crossfire-metaserver-html-files:
+    driver: local
