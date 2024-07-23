@@ -1,10 +1,13 @@
 USE metaserver;
+
 CREATE TABLE `blacklist` (
-	  `entry` NOT NULL auto_increment,
+	  `entry` INT NOT NULL auto_increment,
 	  `hostname` varchar(80),
-	  PRIMARY KEY  (`entry`))
+	  PRIMARY KEY  (`entry`)
+);
+
 CREATE TABLE `servers` (
-	  `entry` NOT NULL auto_increment,
+	  `entry` INT NOT NULL auto_increment,
 	  `hostname` varchar(80),
 	  `port` int(11),
 	  `html_comment` varchar(1024),
@@ -21,4 +24,6 @@ CREATE TABLE `servers` (
 	  `sc_version` varchar(20),
 	  `cs_version` varchar(20),
 	  `last_update` datetime,
-	  PRIMARY KEY  (`entry`))
+	  PRIMARY KEY  (`entry`)
+);
+

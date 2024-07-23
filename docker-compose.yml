@@ -5,8 +5,8 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     volumes:
-      - ./mysql-data:/var/lib/mysql
-      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./.devcontainer/mysql-data:/var/lib/mysql
+      - ./.devcontainer/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-metaserver}
       - MYSQL_DATABASE=${MYSQL_DATABASE:-metaserver}
@@ -31,7 +31,7 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ../html:/var/www/html/:cached
+      - ./html:/var/www/html/:cached
     environment:
       - DB_HOST=${DB_HOST:-mysql}
       - DB_USER=${DB_USER:-metaserver}
@@ -50,7 +50,7 @@ services:
       dockerfile: Dockerfile
     entrypoint: []
     volumes:
-      - ../html:/var/www/html/:cached
+      - ./html:/var/www/html/:cached
       - /opt/docker/portal/letsencrypt:/etc/letsencrypt
     environment:
       - CERTBOT_EMAIL=${CERTBOT_EMAIL:-webmaster@localhost}
