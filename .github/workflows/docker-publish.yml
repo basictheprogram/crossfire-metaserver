@@ -26,10 +26,13 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD_METASERVER }}
 
     - name: Build Docker image
-      run: docker-compose -f docker-compose.yml build
+      run: |
+        cd .devcontainer
+        docker-compose -f docker-compose.yml build
 
     - name: Tag and Push Docker images
       run: |
+        cd .devcontainer
         for SERVICE in crossfire-metaserver_www; do
           IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/$SERVICE
           IMAGE_TAG=latest
