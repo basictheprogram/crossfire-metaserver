@@ -1,0 +1,33 @@
+---
+services:
+  mysql:
+    volumes:
+      - ./.devcontainer/mysql-data:/var/lib/mysql
+      - ./.devcontainer/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    environment:
+      - MYSQL_ROOT_PASSWORD=metaserver
+      - MYSQL_DATABASE=metaserver
+      - MYSQL_USER=metaserver
+      - MYSQL_PASSWORD=metaserver
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  www:
+    volumes:
+      - ./html:/var/www/html/:cached
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=metaserver
+      - DB_PWD=metaserver
+      - DB_NAME=metaserver
+
+  certbot:
+    volumes:
+      - ./html:/var/www/html/:cached
+      - /opt/docker/portal/letsencrypt:/etc/letsencrypt
+    environment:
+      - CERTBOT_EMAIL=webmaster@localhost
+      - CERTBOT_DOMAIN=localhost

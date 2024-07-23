@@ -191,6 +191,7 @@ crashlytics.properties
 csrc/
 dist/
 dist/
+docker-compose.override.yml
 dw_php_codehinting.config
 dwsync.xml
 ehthumbs.db
