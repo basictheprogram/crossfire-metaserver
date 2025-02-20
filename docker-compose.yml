@@ -20,7 +20,7 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - production
+      - metaserver
 
   www:
     container_name: crossfire-metaserver-www
@@ -39,7 +39,7 @@ services:
       - "80:80"
       - "443:443"
     networks:
-      - production
+      - metaserver
 
   certbot:
     container_name: crossfire-metaserver-certbot
@@ -55,11 +55,11 @@ services:
       - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
     restart: "no"
     networks:
-      - production
+      - metaserver
 
 networks:
   production:
-    name: production
+    name: metaserver
     driver: bridge
 
 volumes:

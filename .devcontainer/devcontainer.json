@@ -2,7 +2,7 @@
   "name": "crossfire-metaserver",
   "dockerComposeFile": ["docker-compose.yml"],
   "service": "vscode",
-  "workspaceFolder": "/workspaces",
+  "workspaceFolder": "/workspace",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -23,6 +23,6 @@
       ]
     }
   },
-  "remoteUser": "you",
+  "remoteUser": "vscode",
   "postCreateCommand": "./.devcontainer/postCreateCommand.sh"
 }
