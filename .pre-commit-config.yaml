@@ -5,14 +5,13 @@
 #
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
       - id: detect-private-key
-      - id: check-xml
       - id: check-shebang-scripts-are-executable
       - id: file-contents-sorter
         files: requirements.txt|\.gitignore|\.dockerignore
@@ -21,6 +20,19 @@ repos:
     rev: 1.4.0
     hooks:
       - id: php-lint
+
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        files: \.(yaml|yml)$
+        types: [file, yaml]
+        entry: yamllint --strict -f parsable
+
+  - repo: https://github.com/zricethezav/gitleaks
+    rev: v8.23.3
+    hooks:
+      - id: gitleaks
 
 ci:
   autoupdate_schedule: weekly

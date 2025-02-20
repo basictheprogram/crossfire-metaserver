@@ -1,19 +1,21 @@
 ---
 services:
   vscode:
-    container_name: crossfire-metaserver-vscode
+    container_name: metaserver-vscode
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
     volumes:
-      - ..:/workspaces:cached
+      - ..:/workspace:cached
+    environment:
+      - TZ=${TZ:-America/Chicago}
     command: sleep infinity
     networks:
       - devel
 
   mysql:
-    container_name: crossfire-metaserver-mysql
-    image: mysql:8.0
+    container_name: metaserver-mysql
+    image: mysql:8.4
     restart: unless-stopped
     volumes:
       - ./mysql-data:/var/lib/mysql
@@ -34,11 +36,10 @@ services:
       - devel
 
   www:
-    container_name: crossfire-metaserver-www
+    container_name: metaserver-www
     build:
       context: ../docker/www
       dockerfile: Dockerfile
-      image: crossfire-metaserver_www:latest
     restart: unless-stopped
     depends_on:
       - mysql
