@@ -1,5 +1,9 @@
 ---
+<<<<<<< HEAD
 name: Build and Publish Crossfire Metaserver Docker Images
+=======
+name: Build and Publish Crossfire Metaserver Docker Image
+>>>>>>> d00d9ac (Refactor DevContainer configuration and Docker setup)
 
 "on":
   push:
@@ -29,6 +33,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD_METASERVER }}
 
+<<<<<<< HEAD
       - name: Build and Push ${{ matrix.service }} service
         run: |
           docker buildx build \
@@ -37,3 +42,17 @@ jobs:
             --tag ${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver-${{ matrix.service }}:latest \
             --push=${{ github.event_name != 'pull_request' }} \
             .
+=======
+      - name: Build Docker image
+        run: |
+          docker-compose -f docker-compose.yml build
+
+      - name: Tag and Push Docker images
+        run: |
+          for SERVICE in crossfire-metaserver_www; do
+            IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/$SERVICE
+            IMAGE_TAG=latest
+            docker tag $SERVICE $IMAGE_NAME:$IMAGE_TAG
+            docker push $IMAGE_NAME:$IMAGE_TAG
+          done
+>>>>>>> d00d9ac (Refactor DevContainer configuration and Docker setup)
