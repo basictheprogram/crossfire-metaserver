@@ -15,7 +15,7 @@ services:
 
   mysql:
     container_name: metaserver-mysql
-    image: mysql:8.4
+    image: mysql:lts
     restart: unless-stopped
     volumes:
       - ./mysql-data:/var/lib/mysql
@@ -40,6 +40,9 @@ services:
     build:
       context: ../docker/www
       dockerfile: Dockerfile
+      args:
+        APACHE_SERVER_ADMIN: ${APACHE_SERVER_ADMIN}
+        APACHE_SERVER_NAME: ${APACHE_SERVER_NAME}
     restart: unless-stopped
     depends_on:
       - mysql
