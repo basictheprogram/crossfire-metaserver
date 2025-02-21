@@ -1,8 +1,8 @@
 #!/bin/bash
 
-curl -X POST http://cf-metaserver.cf.real-time.com/meta_update.php \
-     -d "hostname=localhost" \
-     -d "port=8080" \
+curl -X POST http://localhost/meta_update.php \
+     -d "hostname=crossfire.local" \
+     -d "port=8888" \
      -d "html_comment=This is an HTML comment" \
      -d "text_comment=This is a text comment" \
      -d "archbase=Archetypes base description" \
