@@ -58,7 +58,7 @@ services:
       - metaserver
 
 networks:
-  production:
+  metaserver:
     name: metaserver
     driver: bridge
 
