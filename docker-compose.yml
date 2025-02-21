@@ -24,7 +24,7 @@ services:
 
   www:
     container_name: crossfire-metaserver-www
-    image: basictheprogram/crossfire-metaserver-www:latest
+    image: crossfire-metaserver-www
     restart: unless-stopped
     depends_on:
       - mysql
@@ -49,7 +49,7 @@ services:
   # port 80.
   certbot:
     container_name: crossfire-metaserver-certbot
-    image: basictheprogram/crossfire-metaserver-certbot:latest
+    image: crossfire-metaserver-certbot
     depends_on:
       - www
     entrypoint: []

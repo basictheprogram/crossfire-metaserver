@@ -26,11 +26,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD_METASERVER }}
 
-      - name: Build and Push Docker images (Multi-Arch)
+      - name: Build and Push www service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./docker/www
+          push: ${{ github.event_name != 'pull_request' }}  # Don't push on PRs
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver-www:latest
+
+      - name: Build and Push certbot service
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
+          file: ./docker/certbot/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver_www:latest
+            ${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver-certbot:latest
