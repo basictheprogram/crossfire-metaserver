@@ -25,6 +25,8 @@ certbot --verbose certonly \
     --no-eff-email
 
 # Check if DH params file exists, if not, generate it
-if [ ! -f "/etc/letsencrypt/live/www.${CERTBOT_DOMAIN}/ssl-dhparams.pem" ]; then
-    openssl dhparam -out /etc/letsencrypt/live/www.${CERTBOT_DOMAIN}/ssl-dhparams.pem 2048
+if [ ! -f "/etc/letsencrypt/live/${CERTBOT_DOMAIN}/ssl-dhparams.pem" ]; then
+    openssl dhparam -out /etc/letsencrypt/live/${CERTBOT_DOMAIN}/ssl-dhparams.pem 2048
 fi
+
+# certbot certonly --standalone -d yourdomain.com --email your@email.com --agree-tos --non-interactive

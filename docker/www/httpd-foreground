@@ -3,9 +3,9 @@ set -e
 
 development() {
     echo "==> Checking for dhparams.pem"
-    if [ ! -f "/etc/letsencrypt/live/www.savysocials.com/ssl-dhparams.pem" ]; then
+    if [ ! -f "/etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem" ]; then
         echo "==> Generating dhparams.pem"
-        openssl dhparam -out /etc/letsencrypt/live/www.savysocials.com/ssl-dhparams.pem 2048
+        openssl dhparam -out /etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem 2048
     fi
 
     echo "==> Checking for judging-portal.${DOMAIN}/fullchain.pem"
@@ -20,9 +20,9 @@ development() {
 
 staging() {
     echo "==> Checking for dhparams.pem"
-    if [ ! -f "/etc/letsencrypt/live/www.savysocials.com/ssl-dhparams.pem" ]; then
+    if [ ! -f "/etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem" ]; then
         echo "==> Generating dhparams.pem"
-        openssl dhparam -out /etc/letsencrypt/live/www.savysocials.com/ssl-dhparams.pem 2048
+        openssl dhparam -out /etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem 2048
     fi
 
     echo "==> Checking for www.${DOMAIN}/fullchain.pem"
@@ -37,9 +37,9 @@ staging() {
 
 production() {
     echo "==> Checking for dhparams.pem"
-    if [ ! -f "/etc/letsencrypt/live/www.savysocials.com/ssl-dhparams.pem" ]; then
+    if [ ! -f "/etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem" ]; then
         echo "==> Generating dhparams.pem"
-        openssl dhparam -out /etc/letsencrypt/live/www.savysocials.com/ssl-dhparams.pem 2048
+        openssl dhparam -out /etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem 2048
     fi
 
     echo "==> Checking for www.${DOMAIN}/fullchain.pem"
@@ -67,15 +67,15 @@ fi
 
 
 case "$DOMAIN" in
-    "dev.savysocials.com")
+    "dev.your-domain.com")
         echo "==> development environment"
         development
         ;;
-    "stage.savysocials.com")
+    "stage.your-domain.com")
         echo "==> staging environment"
         staging
         ;;
-    "savysocials.com")
+    "your-domain.com")
         echo "==> production environment"
         production
         ;;

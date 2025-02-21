@@ -2,7 +2,7 @@
 services:
   mysql:
     container_name: crossfire-metaserver-mysql
-    image: mysql:8.0
+    image: mysql:lts
     restart: unless-stopped
     volumes:
       - crossfire-metaserver-mysql-data:/var/lib/mysql
@@ -24,32 +24,38 @@ services:
 
   www:
     container_name: crossfire-metaserver-www
-    image: basictheprogram/crossfire-metaserver_www::latest
+    image: basictheprogram/crossfire-metaserver-www:latest
     restart: unless-stopped
     depends_on:
       - mysql
     volumes:
       - crossfire-metaserver-html-files:/var/www/html/:cached
+      - crossfire-metaserver-letsencrypt:/etc/letsencrypt
     environment:
       - DB_HOST=${DB_HOST}
       - DB_USER=${DB_USER}
       - DB_PWD=${DB_PWD}
       - DB_NAME=${DB_NAME}
+      - APACHE_SERVER_ADMIN=${APACHE_SERVER_ADMIN}
+      - APACHE_SERVER_NAME=${APACHE_SERVER_NAME}
     ports:
       - "80:80"
       - "443:443"
     networks:
       - metaserver
 
+  # Using "cerbot certonly --standalone ..." Certbot temporarily runs its own
+  # lightweight web server to respond to Let's Encrypt's HTTP-01 challenge on
+  # port 80.
   certbot:
     container_name: crossfire-metaserver-certbot
-    build:
-      context: ./docker/certbot
-      dockerfile: Dockerfile
+    image: basictheprogram/crossfire-metaserver-certbot:latest
+    depends_on:
+      - www
     entrypoint: []
     volumes:
       - crossfire-metaserver-html-files:/var/www/html/:cached
-      - /opt/docker/portal/letsencrypt:/etc/letsencrypt
+      - crossfire-metaserver-letsencrypt:/etc/letsencrypt
     environment:
       - CERTBOT_EMAIL=${CERTBOT_EMAIL}
       - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
@@ -66,4 +72,6 @@ volumes:
   crossfire-metaserver-mysql-data:
     driver: local
   crossfire-metaserver-html-files:
+    driver: local
+  crossfire-metaserver-letsencrypt:
     driver: local
