@@ -30,6 +30,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./docker/www
+          file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}  # Don't push on PRs
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -38,8 +39,8 @@ jobs:
       - name: Build and Push certbot service
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./docker/certbot/Dockerfile
+          context: ./docker/certbot
+          file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64
           tags: |
