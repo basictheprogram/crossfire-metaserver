@@ -21,12 +21,17 @@ RUN apt-get update -qq \
    && apt-get clean  \
    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY ./metaserver.conf.template /etc/apache2/sites-available/metaserver.conf.template
+COPY ./*.conf.template /etc/apache2/sites-available/metaserver.conf.template
 
 RUN a2dissite 000-default.conf a2default-ssl.conf || true \
-    && rm -f /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/default-ssl.conf
+    && rm -f /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/default-ssl.conf \
+    && mkdir -p /opt/www
+
+COPY ./httpd-foregound.sh /opt/www/httpd-foregound.sh
 
 WORKDIR /var/www/html
 
 EXPOSE 80
 EXPOSE 443
+
+CMD ["/opt/www/httpd-foregound.sh"]
