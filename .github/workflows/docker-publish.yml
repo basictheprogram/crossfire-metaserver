@@ -30,10 +30,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD_METASERVER }}
 
       - name: Build and Push ${{ matrix.service }} service
-        working-directory: docker/${{ matrix.service }}
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --file docker/${{ matrix.service }}/Dockerfile \
             --tag ${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver-${{ matrix.service }}:latest \
-            --push=${{ github.event_name != 'pull_request' }} .
+            --push=${{ github.event_name != 'pull_request' }} \
+            .
