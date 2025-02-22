@@ -42,7 +42,12 @@ if [ -z $APACHE_SERVER_NAME ]; then
     exit 1
 fi
 
+if [ ! -x /usr/sbin/apache2 ]; then
+    echo "==> Error: apache2 not found or not executable! Aboring."
+    exit 1
+fi
+
 echo "==> Production environment"
 production
 
-exec httpd -DFOREGROUND "$@"
+exec apache2 -DFOREGROUND "$@"
