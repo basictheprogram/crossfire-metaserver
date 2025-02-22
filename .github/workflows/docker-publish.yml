@@ -1,5 +1,5 @@
 ---
-name: Build and Publish Crossfire Metaserver Docker Image
+name: Build and Publish Crossfire Metaserver Docker Images
 
 "on":
   push:
@@ -12,6 +12,9 @@ name: Build and Publish Crossfire Metaserver Docker Image
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [www, certbot]
 
     steps:
       - name: Checkout repository
@@ -26,22 +29,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD_METASERVER }}
 
-      - name: Build and Push www service
-        uses: docker/build-push-action@v5
-        with:
-          context: ./docker/www
-          file: ./Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}  # Don't push on PRs
-          platforms: linux/amd64,linux/arm64
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver-www:latest
-
-      - name: Build and Push certbot service
-        uses: docker/build-push-action@v5
-        with:
-          context: ./docker/certbot
-          file: ./Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64,linux/arm64
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver-certbot:latest
+      - name: Build and Push ${{ matrix.service }} service
+        working-directory: docker/${{ matrix.service }}
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --file Dockerfile \
+            --tag ${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver-${{ matrix.service }}:latest \
+            --push=${{ github.event_name != 'pull_request' }} .
