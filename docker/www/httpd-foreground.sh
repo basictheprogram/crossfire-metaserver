@@ -2,6 +2,12 @@
 set -e
 
 production() {
+    echo "==> Checking for /etc/letsencrypt/live/${APACHE_SERVER_NAME}"
+    if [ ! -d "/etc/letsencrypt/live/${APACHE_SERVER_NAME}" ]; then
+        echo "==> Creating "/etc/letsencrypt/live/${APACHE_SERVER_NAME}
+        mkdir -p "/etc/letsencrypt/live/${APACHE_SERVER_NAME}"
+    fi
+
     echo "==> Checking for dhparams.pem"
     if [ ! -f "/etc/letsencrypt/live/${APACHE_SERVER_NAME}/ssl-dhparams.pem" ]; then
         echo "==> Generating dhparams.pem"
