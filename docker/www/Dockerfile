@@ -24,9 +24,7 @@ RUN apt-get update -qq \
 COPY ./metaserver.conf.template /etc/apache2/sites-available/metaserver.conf.template
 
 RUN a2dissite 000-default.conf a2default-ssl.conf || true \
-    && rm -f /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/default-ssl.conf \
-    && envsubst < /etc/apache2/sites-available/metaserver.conf.template > /etc/apache2/sites-available/metaserver.conf \
-    && a2ensite metaserver
+    && rm -f /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/default-ssl.conf
 
 WORKDIR /var/www/html
 
