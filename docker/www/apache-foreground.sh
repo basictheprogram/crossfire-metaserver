@@ -46,26 +46,33 @@ upstream()
 
 production()
 {
-    echo "==> Checking for /etc/letsencrypt/live/${APACHE_SERVER_NAME}"
-    if [ ! -d "/etc/letsencrypt/live/${APACHE_SERVER_NAME}" ]; then
-        echo "==> Creating "/etc/letsencrypt/live/${APACHE_SERVER_NAME}
-        mkdir -p "/etc/letsencrypt/live/${APACHE_SERVER_NAME}"
+    LIVE_PATH="/etc/letsencrypt/live/${APACHE_SERVER_NAME}"
+    SSL_DH_PARAMS="${LIVE_PATH}/ssl-dhparams.pem"
+    CERT_PATH="${LIVE_PATH}/fullchain.pem"
+    KEY_PATH="${LIVE_PATH}/privkey.pem"
+
+    echo "==> Checking for ${LIVE_PATH}"
+    if [ ! -d ${LIVE_PATH} ]; then
+        echo "==> Creating ${LIVE_PATH}"
+        mkdir -p ${LIVE_PATH}
     fi
 
     echo "==> Checking for dhparams.pem"
-    if [ ! -f "/etc/letsencrypt/live/${APACHE_SERVER_NAME}/ssl-dhparams.pem" ]; then
+    if [ ! -f ${SSL_DH_PARAMS} ]; then
         echo "==> Generating dhparams.pem"
-        openssl dhparam -out "/etc/letsencrypt/live/${APACHE_SERVER_NAME}/ssl-dhparams.pem" 2048
+        openssl dhparam -out ${SSL_DH_PARAMS} 2048
     fi
 
-    echo "==> Checking for ${APACHE_SERVER_NAME}/fullchain.pem"
-    if [ ! -f "/etc/letsencrypt/live/${APACHE_SERVER_NAME}/fullchain.pem" ]; then
-        echo "==> No SSL certificate, enabling HTTP only"
-        envsubst < /etc/apache2/sites-available/metaserver.conf.template > /etc/apache2/sites-available/metaserver.conf
-    else
-        echo "==> SSL certificate found, enabling HTTPS"
-        envsubst < /etc/apache2/sites-available/metaserver-ssl.conf.template > /etc/apache2/sites-available/metaserver.conf
-    fi
+    echo "==> Checking for ${CERT_PATH} and ${KEY_PATH}"
+
+    # Wait for Certbot to finish and certificates to be available
+    while [ ! -f "$CERT_PATH" ] || [ ! -f "$PRIV_KEY_PATH" ]; do
+        echo "Waiting for Certbot to complete certificate issuance..."
+        sleep 5
+    done
+
+    echo "==> SSL certificate found, enabling HTTPS"
+    envsubst < /etc/apache2/sites-available/metaserver-ssl.conf.template > /etc/apache2/sites-available/metaserver.conf
 }
 
 # Apache gets grumpy about PID files pre-existing
