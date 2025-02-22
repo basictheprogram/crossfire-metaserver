@@ -28,6 +28,7 @@ RUN a2dissite 000-default.conf a2default-ssl.conf || true \
     && mkdir -p /opt/www
 
 COPY ./apache-foreground.sh  /opt/www/apache-foreground.sh
+COPY ../../html/ /var/www/html/
 
 WORKDIR /var/www/html
 
