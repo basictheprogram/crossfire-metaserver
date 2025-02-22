@@ -24,10 +24,11 @@ services:
 
   www:
     container_name: crossfire-metaserver-www
-    image: crossfire-metaserver-www
+    image: basictheprogram/crossfire-metaserver-www
     restart: unless-stopped
     depends_on:
       - mysql
+      - certbot
     volumes:
       - crossfire-metaserver-html-files:/var/www/html/:cached
       - crossfire-metaserver-letsencrypt:/etc/letsencrypt
@@ -49,9 +50,7 @@ services:
   # port 80.
   certbot:
     container_name: crossfire-metaserver-certbot
-    image: crossfire-metaserver-certbot
-    depends_on:
-      - www
+    image: basictheprogram/crossfire-metaserver-certbot
     entrypoint: []
     volumes:
       - crossfire-metaserver-html-files:/var/www/html/:cached
