@@ -34,4 +34,4 @@ WORKDIR /var/www/html
 EXPOSE 80
 EXPOSE 443
 
-CMD ["/opt/www/apache-foreground.sh "]
+CMD ["/opt/www/apache-foreground.sh"]
