@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 # Taken from https://github.com/docker-library/php/blob/master/apache2-foreground
