@@ -15,8 +15,8 @@ fi
 echo "==> Getting certificate for ${CERTBOT_DOMAIN}"
 
 certbot --verbose certonly \
-    --webroot \
-    --webroot-path "/var/www/html/" \
+    --standalone \
+    --preferred-challenges http \
     --domain "${CERTBOT_DOMAIN}" \
     --email "${CERTBOT_EMAIL}" \
     --rsa-key-size 4096 \
