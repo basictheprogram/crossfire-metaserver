@@ -1,88 +1,42 @@
 #!/bin/sh
 set -e
 
-development() {
-    echo "==> Checking for dhparams.pem"
-    if [ ! -f "/etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem" ]; then
-        echo "==> Generating dhparams.pem"
-        openssl dhparam -out /etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem 2048
-    fi
-
-    echo "==> Checking for judging-portal.${DOMAIN}/fullchain.pem"
-    if [ ! -f "/etc/letsencrypt/live/judging-portal.${DOMAIN}/fullchain.pem" ]; then
-        echo "==> No SSL certificate, enabling HTTP only"
-        envsubst < /etc/nginx/default.conf.template > /etc/nginx/conf.d/default.conf
-    else
-        echo "==> SSL certificate found, enabling HTTPS"
-        envsubst < /etc/nginx/default-ssl.conf.template > /etc/nginx/conf.d/default.conf
-    fi
-}
-
-staging() {
-    echo "==> Checking for dhparams.pem"
-    if [ ! -f "/etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem" ]; then
-        echo "==> Generating dhparams.pem"
-        openssl dhparam -out /etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem 2048
-    fi
-
-    echo "==> Checking for www.${DOMAIN}/fullchain.pem"
-    if [ ! -f "/etc/letsencrypt/live/www.${DOMAIN}/fullchain.pem" ]; then
-        echo "==> No SSL certificate, enabling HTTP only"
-        envsubst < /etc/nginx/default.conf.template > /etc/nginx/conf.d/default.conf
-    else
-        echo "==> SSL certificate found, enabling HTTPS"
-        envsubst < /etc/nginx/default-ssl.conf.template > /etc/nginx/conf.d/default.conf
-    fi
-}
-
 production() {
     echo "==> Checking for dhparams.pem"
-    if [ ! -f "/etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem" ]; then
+    if [ ! -f "/etc/letsencrypt/live/${APACHE_SERVER_NAME}/ssl-dhparams.pem" ]; then
         echo "==> Generating dhparams.pem"
-        openssl dhparam -out /etc/letsencrypt/live/www.your-domain.com/ssl-dhparams.pem 2048
+        openssl dhparam -out /etc/letsencrypt/live/${APACHE_SERVER_NAME}{/ssl-dhparams.pem 2048
     fi
 
-    echo "==> Checking for www.${DOMAIN}/fullchain.pem"
-    if [ ! -f "/etc/letsencrypt/live/www.${DOMAIN}/fullchain.pem" ]; then
+    echo "==> Checking for ${APACHE_SERVER_NAME}/fullchain.pem"
+    if [ ! -f "/etc/letsencrypt/live/${APACHE_SERVER_NAME}/fullchain.pem" ]; then
         echo "==> No SSL certificate, enabling HTTP only"
-        envsubst < /etc/nginx/default.conf.template > /etc/nginx/conf.d/default.conf
+        envsubst < /etc/apache2/sites-available/metaserver.conf.template > /etc/apache2/sites-available/metaserver.conf
     else
         echo "==> SSL certificate found, enabling HTTPS"
-        envsubst < /etc/nginx/default-ssl.conf.template > /etc/nginx/conf.d/default.conf
+        envsubst < /etc/apache2/sites-available/metaserver-ssl.conf.template > /etc/apache2/sites-available/metaserver.conf
     fi
 }
 
 # Apache gets grumpy about PID files pre-existing
-rm -f /usr/local/apache2/logs/httpd.pid
+# rm -f /usr/local/apache2/logs/httpd.pid
 
 if [ ! -x /usr/bin/envsubst ]; then
     echo "==> Error: Cannot envsubst! Aborting."
     exit 1
 fi
 
-if [ -z $DOMAIN ]; then
-    echo "==> Warning: DOMAIN variable is null"
+if [ -z $APACHE_SERVER_ADMIN ]; then
+    echo "==> Error: APACHE_SERVER_ADMIN variable is blank! Aboring."
     exit 1
 fi
 
+if [ -z $APACHE_SERVER_NAME ]; then
+    echo "==> Error: APACHE_SERVER_NAME variable is blank! Aboring."
+    exit 1
+fi
 
-case "$DOMAIN" in
-    "dev.your-domain.com")
-        echo "==> development environment"
-        development
-        ;;
-    "stage.your-domain.com")
-        echo "==> staging environment"
-        staging
-        ;;
-    "your-domain.com")
-        echo "==> production environment"
-        production
-        ;;
-    *)
-        echo "==> Error: DOMAIN variable is not set to a valid domain"
-        exit 1
-        ;;
-esac
+echo "==> Production environment"
+production
 
 exec httpd -DFOREGROUND "$@"
