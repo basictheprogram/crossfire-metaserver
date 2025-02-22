@@ -27,11 +27,11 @@ RUN a2dissite 000-default.conf a2default-ssl.conf || true \
     && rm -f /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/default-ssl.conf \
     && mkdir -p /opt/www
 
-COPY ./httpd-foregound.sh /opt/www/httpd-foregound.sh
+COPY ./httpd-foreground.sh /opt/www/httpd-foreground.sh
 
 WORKDIR /var/www/html
 
 EXPOSE 80
 EXPOSE 443
 
-CMD ["/opt/www/httpd-foregound.sh"]
+CMD ["/opt/www/httpd-foreground.sh"]
