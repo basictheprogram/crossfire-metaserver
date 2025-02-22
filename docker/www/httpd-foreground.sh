@@ -5,7 +5,7 @@ production() {
     echo "==> Checking for dhparams.pem"
     if [ ! -f "/etc/letsencrypt/live/${APACHE_SERVER_NAME}/ssl-dhparams.pem" ]; then
         echo "==> Generating dhparams.pem"
-        openssl dhparam -out /etc/letsencrypt/live/${APACHE_SERVER_NAME}{/ssl-dhparams.pem 2048
+        openssl dhparam -out "/etc/letsencrypt/live/${APACHE_SERVER_NAME}/ssl-dhparams.pem" 2048
     fi
 
     echo "==> Checking for ${APACHE_SERVER_NAME}/fullchain.pem"
