@@ -21,7 +21,7 @@ RUN apt-get update -qq \
    && apt-get clean  \
    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY ./docker/www/*.conf.template /etc/apache2/sites-available/metaserver.conf.template
+COPY ./docker/www/*.conf.template /etc/apache2/sites-available/
 
 RUN a2dissite 000-default.conf a2default-ssl.conf || true \
     && rm -f /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/default-ssl.conf \

@@ -19,6 +19,7 @@ source_env()
 
 export $(grep -v '^#' ../.env | xargs)
 
+docker pull basictheprogram/crossfire-metaserver-certbot
 docker run --rm -it \
   --name crossfire-metaserver-certbot \
   --network metaserver \
