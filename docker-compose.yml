@@ -1,5 +1,6 @@
 ---
 services:
+  # Did to populate the environment? export $(grep -v '^#' .env | xargs)
   mysql:
     container_name: crossfire-metaserver-mysql
     image: mysql:lts
