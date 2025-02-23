@@ -17,7 +17,7 @@ else
 fi
 }
 
-export $(grep -v '^#' .env | xargs)
+export $(grep -v '^#' ../.env | xargs)
 
 docker run --rm -it \
   --name crossfire-metaserver-certbot \
