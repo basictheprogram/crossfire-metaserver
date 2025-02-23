@@ -1,5 +1,6 @@
 ---
 services:
+  # Did to populate the environment? export $(grep -v '^#' .env | xargs)
   mysql:
     container_name: crossfire-metaserver-mysql
     image: mysql:lts
@@ -58,6 +59,8 @@ services:
     environment:
       - CERTBOT_EMAIL=${CERTBOT_EMAIL}
       - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
+    ports:
+      - "80:80"
     restart: "no"
     networks:
       - metaserver
