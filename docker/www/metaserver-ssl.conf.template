@@ -3,6 +3,8 @@
     DocumentRoot /var/www/html
     ServerName ${APACHE_SERVER_NAME}
 
+    DirectoryIndex meta_html.php index.html
+
     SSLEngine on
     SSLProxyEngine On
 
@@ -12,7 +14,7 @@
     SSLCertificateChainFile /etc/letsencrypt/live/${APACHE_SERVER_NAME}/fullchain.pem
 
     # Specify DH parameters file for better security
-    SSLOpenSSLConfCmd DHParameters "/etc/letsencrypt/ssl-dhparams.pem"
+    SSLOpenSSLConfCmd DHParameters "/etc/letsencrypt/live/${APACHE_SERVER_NAME}/ssl-dhparams.pem"
 
     # Logging
     ErrorLog /proc/self/fd/2
