@@ -66,13 +66,14 @@ production()
     echo "==> Checking for ${CERT_PATH} and ${KEY_PATH}"
 
     # Wait for Certbot to finish and certificates to be available
-    while [ ! -f "$CERT_PATH" ] || [ ! -f "$PRIV_KEY_PATH" ]; do
+    while [ ! -f "$CERT_PATH" ] || [ ! -f "$KEY_PATH" ]; do
         echo "Waiting for Certbot to complete certificate issuance..."
         sleep 5
     done
 
     echo "==> SSL certificate found, enabling HTTPS"
     envsubst < /etc/apache2/sites-available/metaserver-ssl.conf.template > /etc/apache2/sites-available/metaserver.conf
+    a2ensite metaserver
 }
 
 # Apache gets grumpy about PID files pre-existing
