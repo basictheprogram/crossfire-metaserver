@@ -1,6 +1,5 @@
 ---
 services:
-  # Did to populate the environment? export $(grep -v '^#' .env | xargs)
   mysql:
     container_name: crossfire-metaserver-mysql
     image: mysql:lts
@@ -9,6 +8,7 @@ services:
       - crossfire-metaserver-mysql-data:/var/lib/mysql
       - ./.devcontainer/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
     environment:
+      # Did to populate the environment? export $(grep -v '^#' .env | xargs)
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
@@ -34,6 +34,7 @@ services:
       - crossfire-metaserver-html-files:/var/www/html/:cached
       - crossfire-metaserver-letsencrypt:/etc/letsencrypt
     environment:
+      # Did to populate the environment? export $(grep -v '^#' .env | xargs)
       - DB_HOST=${DB_HOST}
       - DB_USER=${DB_USER}
       - DB_PWD=${DB_PWD}
