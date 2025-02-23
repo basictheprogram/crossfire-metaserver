@@ -24,6 +24,7 @@ RUN apt-get update -qq \
 COPY ./docker/www/*.conf.template /etc/apache2/sites-available/
 
 RUN a2dissite 000-default.conf a2default-ssl.conf || true \
+    && a2enmod ssl \
     && rm -f /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/default-ssl.conf \
     && mkdir -p /opt/www
 
