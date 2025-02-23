@@ -25,3 +25,22 @@
         CustomLog /proc/self/fd/1 combined
     </IfModule>
 </VirtualHost>
+
+<VirtualHost *:80>
+    ServerAdmin ${APACHE_SERVER_ADMIN}
+    DocumentRoot /var/www/html
+    ServerName ${APACHE_SERVER_NAME}
+    ServerAlias localhost
+
+    <IfModule dir_module>
+        DirectoryIndex meta_html.php
+    </IfModule>
+
+    ErrorLog /proc/self/fd/2
+    LogLevel warn
+
+    <IfModule log_config_module>
+        LogFormat "%a %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" \"%{X-Forwarded-For}i\"" combined
+        CustomLog /proc/self/fd/1 combined
+    </IfModule>
+</VirtualHost>
