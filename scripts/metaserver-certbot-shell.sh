@@ -2,22 +2,22 @@
 
 source_env()
 {
-# Check if .env file exists
-if [ -f ".env" ]; then
-    # Loop through each line in the .env file
-    while IFS='=' read -r var value; do
-        # Skip lines that are empty or start with a comment
-        if [[ -n "$var" && "$var" != \#* ]]; then
-            # Export the variable
-            export "$var=$value"
-        fi
-    done < .env
-else
-    echo ".env file not found!"
-fi
+    # Check if .env file exists
+    if [ -f ".env" ]; then
+        # Loop through each line in the .env file
+        while IFS='=' read -r var value; do
+            # Skip lines that are empty or start with a comment
+            if [[ -n "$var" && "$var" != \#* ]]; then
+                # Export the variable
+                export "$var=$value"
+            fi
+        done < .env
+    else
+        echo ".env file not found!"
+    fi
 }
 
-export $(grep -v '^#' .env | xargs)
+export $(grep -v '^#' ../.env | xargs)
 
 docker run --rm -it \
   --name crossfire-metaserver-certbot \
