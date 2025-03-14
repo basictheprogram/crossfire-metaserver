@@ -25,10 +25,13 @@
 // to parse form
 require_once("common.php");
 
-if (!$db=db_connect()) {
+$db = db_connect();
+
+if (!$db) {
     log_message(LOG_ERROR, "Unable to connect to database\n");
     exit;
 }
+
 
 // Could be simpler to do a select * here, but
 // selecting only the fields we want, as unix format
@@ -44,7 +47,7 @@ $query="select hostname,port,html_comment,text_comment,archbase,mapbase," .
 $qret = db_query($db, $query);
 
 // This really shouldn't happen, but might as well log for if it does.
-if (db_num_rows($qret)<1) {
+if (db_num_rows($qret) < 1 ) {
     exit;
 }
 

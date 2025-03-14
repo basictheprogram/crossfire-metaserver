@@ -55,7 +55,7 @@ if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST['hostname']) {
     echo "incoming ip: " . $_SERVER['REMOTE_ADDR'] . ", DNS of that: $hostname\n";
     echo "User specified hostname: " . $_POST['hostname'] . " IP of that hostname: $ip\n";
     log_message(LOG_WARN, $_SERVER['REMOTE_ADDR'] . " does not have correct hostname set\n");
-    exit;
+    // exit;
 }
 
 

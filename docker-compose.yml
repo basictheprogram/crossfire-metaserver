@@ -1,0 +1,80 @@
+---
+services:
+  mysql:
+    container_name: crossfire-metaserver-mysql
+    image: mysql:lts
+    restart: unless-stopped
+    volumes:
+      - crossfire-metaserver-mysql-data:/var/lib/mysql
+      - ./.devcontainer/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    environment:
+      # Did to populate the environment? export $(grep -v '^#' .env | xargs)
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    ports:
+      - "3306:3306"
+    networks:
+      - metaserver
+
+  www:
+    container_name: crossfire-metaserver-www
+    image: basictheprogram/crossfire-metaserver-www
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - certbot
+    volumes:
+      - crossfire-metaserver-html-files:/var/www/html/:cached
+      - crossfire-metaserver-letsencrypt:/etc/letsencrypt
+    environment:
+      # Did to populate the environment? export $(grep -v '^#' .env | xargs)
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PWD=${DB_PWD}
+      - DB_NAME=${DB_NAME}
+      - APACHE_SERVER_ADMIN=${APACHE_SERVER_ADMIN}
+      - APACHE_SERVER_NAME=${APACHE_SERVER_NAME}
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - metaserver
+
+  # Using "cerbot certonly --standalone ..." Certbot temporarily runs its own
+  # lightweight web server to respond to Let's Encrypt's HTTP-01 challenge on
+  # port 80.
+  certbot:
+    container_name: crossfire-metaserver-certbot
+    image: basictheprogram/crossfire-metaserver-certbot
+    entrypoint: []
+    volumes:
+      - crossfire-metaserver-html-files:/var/www/html/:cached
+      - crossfire-metaserver-letsencrypt:/etc/letsencrypt
+    environment:
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
+      - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
+    ports:
+      - "80:80"
+    restart: "no"
+    networks:
+      - metaserver
+
+networks:
+  metaserver:
+    name: metaserver
+    driver: bridge
+
+volumes:
+  crossfire-metaserver-mysql-data:
+    driver: local
+  crossfire-metaserver-html-files:
+    driver: local
+  crossfire-metaserver-letsencrypt:
+    driver: local
