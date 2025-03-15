@@ -16,6 +16,7 @@ services:
     image: traefik:3
     container_name: metaserver-traefik
     environment:
+      - DOMAIN=localhost
       - TZ=America/Chicago
     ports:
       - 80:80
@@ -24,16 +25,15 @@ services:
     labels:
       # Traefik configuration
       - traefik.enable=true
-      - traefik.docker.network=traefik-public
+      - traefik.docker.network=devel
       - traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080
       # HTTP router configuration
       - traefik.http.routers.traefik-dashboard-http.entrypoints=http
       - traefik.http.routers.traefik-dashboard-http.rule=Host(`traefik.${DOMAIN?Variable not set}`)
-      # HTTPS router configuration
+      # HTTPS router configuration (without certresolver)
       - traefik.http.routers.traefik-dashboard-https.entrypoints=https
       - traefik.http.routers.traefik-dashboard-https.rule=Host(`traefik.${DOMAIN?Variable not set}`)
       - traefik.http.routers.traefik-dashboard-https.tls=true
-      - traefik.http.routers.traefik-dashboard-https.tls.certresolver=le
       - traefik.http.routers.traefik-dashboard-https.service=api@internal
       # HTTPS redirect middleware
       - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
@@ -45,8 +45,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
-      - traefik-public-certificates:/certificates
-      - ./traefik-access.log:/var/log/traefik/access.log
+      - ./certificates:/certificates
+      - ./logs/traefik-access.log:/var/log/traefik/access.log
     command:
       # Docker provider configuration
       - --providers.docker
@@ -56,10 +56,9 @@ services:
       - --entrypoints.https.address=:443
       - --entrypoints.http.forwardedHeaders.trustedIPs=0.0.0.0/0
       - --entrypoints.http.proxyProtocol.trustedIPs=0.0.0.0/0
-      # Let's Encrypt configuration
-      - --certificatesresolvers.le.acme.email=${ACME_EMAIL?Variable not set}
-      - --certificatesresolvers.le.acme.storage=/certificates/acme.json
-      - --certificatesresolvers.le.acme.tlschallenge=true
+      # Use custom certificates instead of Let's Encrypt
+      # - --entrypoints.https.http.tls.certificates.certFile=/certificates/traefik.crt
+      # - --entrypoints.https.http.tls.certificates.keyFile=/certificates/traefik.key
       # Logging and API configuration
       - --accesslog.filepath=/var/log/traefik/access.log
       - --accesslog.format=json
@@ -110,9 +109,22 @@ services:
       dockerfile: ./docker/www/Dockerfile
       args:
         APACHE_SERVER_ADMIN: ${APACHE_SERVER_ADMIN:-vscode@localhost}
-        APACHE_SERVER_NAME: ${APACHE_SERVER_NAME:-localhost}
+        APACHE_SERVER_NAME: ${APACHE_SERVER_NAME:-metaserver}
     env_file:
       - ./.env
+    labels:
+      - traefik.enable=true
+
+      - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.metaserver-http.entrypoints=http
+      - traefik.http.routers.metaserver-http.middlewares=https-redirect
+
+      - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.metaserver-https.entrypoints=https
+      - traefik.http.routers.metaserver-https.tls=true
+      # - traefik.http.routers.metaserver-https.tls.certresolver=le
+      - traefik.http.routers.metaserver-https.service=metaserver-service
+      - traefik.http.services.metaserver-service.loadbalancer.server.port=80
     restart: unless-stopped
     depends_on:
       - mysql

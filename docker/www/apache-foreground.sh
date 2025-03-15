@@ -106,7 +106,7 @@ if [ ! -x /usr/sbin/apache2 ]; then
     exit 1
 fi
 
-echo "==> Production environment"
+echo "==> Starting Apache"
 upstream
 using-reverse-proxy
 
