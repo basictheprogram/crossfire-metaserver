@@ -4,17 +4,17 @@ name: Build and Publish Crossfire Metaserver Docker Images
 "on":
   push:
     branches:
-      - vscode-devcontainer
+      - traefik-3
   pull_request:
     branches:
       - main
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-noble
     strategy:
       matrix:
-        service: [www, certbot]
+        service: [www]
 
     steps:
       - name: Checkout repository
