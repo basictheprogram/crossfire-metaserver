@@ -11,7 +11,7 @@ name: Build and Publish Crossfire Metaserver Docker Images
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-noble
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         service: [www]
