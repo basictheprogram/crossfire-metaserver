@@ -5,9 +5,9 @@
 1. Install Visual Studio Code
 2. Install Docker Desktop
 3. Clone the crossfire-metaserver
-4. Open the folder  crossfire-metaserver
+4. Open the folder crossfire-metaserver
 
-VSCode should 3 docker containers
+VSCode should create 3 docker containers
 
   * crossfire-metaserver-mysql
   * crossfire-metaserver-www
