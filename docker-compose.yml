@@ -38,7 +38,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
       - traefik-public-certificates:/certificates
-      - /var/logs/traefik-access.log:/var/log/traefik/access.log
+      - /var/log/traefik/:/var/log/traefik/
     command:
       # Docker provider configuration
       - --providers.docker
