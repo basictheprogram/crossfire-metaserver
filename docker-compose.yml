@@ -4,7 +4,6 @@ services:
     image: traefik:3
     container_name: metaserver-traefik
     environment:
-      - DOMAIN=localhost
       - TZ=America/Chicago
     ports:
       - 80:80
@@ -106,6 +105,7 @@ services:
     restart: always
     depends_on:
       - mysql
+      - traefik
     volumes:
       - crossfire-metaserver-html-files:/var/www/html/:cached
     environment:

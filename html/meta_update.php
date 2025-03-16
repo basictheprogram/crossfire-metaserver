@@ -27,17 +27,26 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 require_once("common.php");
 
+$apache_server_name = getenv('APACHE_SERVER_NAME');
+
+if ($apache_server_name === false) {
+    error_log("Error: APACHE_SERVER_NAME environment variable is not defined.");
+    exit;
+}
 
 // Check that user has set up there config file.  Note that the server will
 // see these messages - whether it logs them or not will depend on settings,
 // but that should let the server admin fix things up.
 
-if ($_POST['hostname'] == "put.your.hostname.here") {
-    echo "You have not properly set up your metaserver2 configuration file - hostname is set to default\n";
+if ($_POST['hostname'] === $apache_server_name) {
+    error_log("You have not properly set up your metaserver2 configuration file.");
     exit;
 }
 
-$hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+// Get the actual client IP when behind Traefik
+$client_ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'];
+
+$hostname = gethostbyaddr($client_ip);
 $ip = gethostbyname($_POST['hostname']);
 
 // Basically, either forward or reverse addressing must work -
@@ -47,11 +56,12 @@ $ip = gethostbyname($_POST['hostname']);
 // by the server, we reject this user - no spoofing of other servers
 // allowed.
 
-if ($ip != $_SERVER['REMOTE_ADDR'] && $hostname != $_POST['hostname']) {
-    echo "neither forward nor reverse DNS look corresponds to incoming ip address.\n";
-    echo "incoming ip: " . $_SERVER['REMOTE_ADDR'] . ", DNS of that: $hostname\n";
-    echo "User specified hostname: " . $_POST['hostname'] . " IP of that hostname: $ip\n";
-    log_message(LOG_WARN, $_SERVER['REMOTE_ADDR'] . " does not have correct hostname set\n");
+if ($ip !== $client_ip && $hostname !== $_POST['hostname']) {
+    echo "Neither forward nor reverse DNS lookup corresponds to incoming IP address.\n";
+    echo "Incoming IP: $client_ip, DNS of that: $hostname\n";
+    echo "User-specified hostname: " . $_POST['hostname'] . ", IP of that hostname: $ip\n";
+
+    error_log("$client_ip does not have correct hostname set\n");
     // exit;
 }
 
