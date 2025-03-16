@@ -38,7 +38,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
       - traefik-public-certificates:/certificates
-      - ./logs/traefik-access.log:/var/log/traefik/access.log
+      - /var/logs/traefik-access.log:/var/log/traefik/access.log
     command:
       # Docker provider configuration
       - --providers.docker
@@ -106,8 +106,8 @@ services:
     depends_on:
       - mysql
       - traefik
-    volumes:
-      - crossfire-metaserver-html-files:/var/www/html/:cached
+    # volumes:
+    #   - crossfire-metaserver-html-files:/var/www/html/:cached
     environment:
       # Did to populate the environment? export $(grep -v '^#' .env | xargs)
       - DB_HOST=${DB_HOST}
@@ -140,7 +140,7 @@ networks:
 volumes:
   crossfire-metaserver-mysql-data:
     driver: local
-  crossfire-metaserver-html-files:
-    driver: local
+  # crossfire-metaserver-html-files:
+  #   driver: local
   traefik-public-certificates:
     driver: local
