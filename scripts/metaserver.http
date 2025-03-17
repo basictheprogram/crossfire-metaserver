@@ -72,11 +72,11 @@ Content-Disposition: form-data; name="port"
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="html_comment"
 
-HTML comment http
+HTML comment http multipart/form-data
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="text_comment"
 
-text comment http
+text comment http multipart/form-data
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="archbase"
 
