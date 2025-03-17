@@ -43,8 +43,8 @@ Content-Type: application/x-www-form-urlencoded
 
 hostname=c-98-61-28-198.hsd1.mn.comcast.net
 &port=80
-&html_comment=HTML+comment+http
-&text_comment=text+comment+http
+&html_comment=HTML+comment+x-www-form-urlencoded
+&text_comment=text+comment+x-www-form-urlencoded
 &archbase=restro
 &mapbase=Standard
 &codebase=Standard
@@ -56,3 +56,69 @@ hostname=c-98-61-28-198.hsd1.mn.comcast.net
 &version=1.0.0
 &sc_version=2.0.0
 &cs_version=2.0.0
+
+### Test http POST multipart/form-data
+POST http://metaserver.cross-fire.org/meta_update.php HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="hostname"
+
+c-98-61-28-198.hsd1.mn.comcast.net
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="port"
+
+80
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="html_comment"
+
+HTML comment http
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="text_comment"
+
+text comment http
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="archbase"
+
+restro
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mapbase"
+
+Standard
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="codebase"
+
+Standard
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="flags"
+
+zzz
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="num_players"
+
+10
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="in_bytes"
+
+1024
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="out_bytes"
+
+2048
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="uptime"
+
+3600
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="version"
+
+1.0.0
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="sc_version"
+
+2.0.0
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="cs_version"
+
+2.0.0
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
