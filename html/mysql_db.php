@@ -78,5 +78,12 @@ function db_num_rows($qlist)
 	return(mysqli_num_rows($qlist));
 }
 
+// Gets the last error the MySQL engine created.
+// Parameter is the db connection from db_connect()
+function db_get_last_error($db)
+{
+    return(mysqli_error($db));
+}
+
 
 ?>
