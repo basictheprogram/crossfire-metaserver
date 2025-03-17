@@ -1,7 +1,7 @@
 #!/bin/bash
 
-curl -X POST http://www/meta_update.php \
-     -d "hostname=metaserver-vscode.devel" \
+curl -X POST https://metaserver.cross-fire.org/meta_update.php  \
+     -d "hostname=c-98-61-28-198.hsd1.mn.comcast.net" \
      -d "port=9000" \
      -d "html_comment=This is an HTML comment" \
      -d "text_comment=This is a text comment" \

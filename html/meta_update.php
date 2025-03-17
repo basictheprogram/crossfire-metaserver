@@ -169,8 +169,9 @@ if (db_num_rows($qret)) {
 // Not really a query, but update
 $result = db_query($db, $update);
 if (!$result) {
-    log_message(LOG_ERROR, "Update/insert failed: $query\n");
-    error_log("Update/insert failed: ". $query);
+    // Get an error message from the database engine, since its way easier to troubleshoot that way.
+    log_message(LOG_ERROR, "Update/insert failed: $update\n".
+        db_get_last_error($db) . "\n");
 }
 
 db_close($db);
