@@ -12,6 +12,73 @@ services:
     command: sleep infinity
     networks:
       - devel
+  traefik:
+    image: traefik:3
+    container_name: metaserver-traefik
+    environment:
+      - DOMAIN=localhost
+      - TZ=America/Chicago
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    labels:
+      # Traefik configuration
+      - traefik.enable=true
+      - traefik.docker.network=devel
+      - traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080
+      # HTTP router configuration
+      - traefik.http.routers.traefik-dashboard-http.entrypoints=http
+      - traefik.http.routers.traefik-dashboard-http.rule=Host(`traefik.${DOMAIN?Variable not set}`)
+      # HTTPS router configuration (without certresolver)
+      - traefik.http.routers.traefik-dashboard-https.entrypoints=https
+      - traefik.http.routers.traefik-dashboard-https.rule=Host(`traefik.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.traefik-dashboard-https.tls=true
+      - traefik.http.routers.traefik-dashboard-https.service=api@internal
+      # HTTPS redirect middleware
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+      - traefik.http.routers.traefik-dashboard-http.middlewares=https-redirect
+      # HTTP Basic Auth middleware
+      - traefik.http.middlewares.admin-auth.basicauth.users=${USERNAME?Variable not set}:${HASHED_PASSWORD?Variable not set}
+      - traefik.http.routers.traefik-dashboard-https.middlewares=admin-auth
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./certificates:/certificates
+      - ./logs/traefik-access.log:/var/log/traefik/access.log
+    command:
+      # Docker provider configuration
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+      # Entrypoints configuration
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+      - --entrypoints.http.forwardedHeaders.trustedIPs=0.0.0.0/0
+      - --entrypoints.http.proxyProtocol.trustedIPs=0.0.0.0/0
+      # Use custom certificates instead of Let's Encrypt
+      # - --entrypoints.https.http.tls.certificates.certFile=/certificates/traefik.crt
+      # - --entrypoints.https.http.tls.certificates.keyFile=/certificates/traefik.key
+      # Logging and API configuration
+      - --accesslog.filepath=/var/log/traefik/access.log
+      - --accesslog.format=json
+      - --accesslog.fields.defaultmode=keep
+      - --accesslog.fields.headers.defaultmode=keep
+      - --accesslog.fields.names.ClientHost=keep
+      - --accesslog.fields.names.RequestAddr=keep
+      - --accesslog.fields.names.RequestMethod=keep
+      - --accesslog.fields.names.RequestPath=keep
+      - --accesslog.fields.names.RequestProtocol=keep
+      - --accesslog.fields.names.ResponseStatus=keep
+      - --accesslog.fields.names.Duration=keep
+      - --accesslog.fields.names.Referer=keep
+      - --accesslog.fields.names.RequestUserAgent=keep
+      - --accesslog.fields.names.StartUTC=drop
+      - --accesslog.fields.names.StartLocal=keep
+      - --log.level=INFO
+      - --api
+    networks:
+      - devel
 
   mysql:
     container_name: metaserver-mysql
@@ -26,7 +93,7 @@ services:
       - MYSQL_USER=${MYSQL_USER:-metaserver}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-metaserver}
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$MYSQL_PASSWORD"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -38,11 +105,26 @@ services:
   www:
     container_name: metaserver-www
     build:
-      context: ../docker/www
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: ./docker/www/Dockerfile
       args:
-        APACHE_SERVER_ADMIN: ${APACHE_SERVER_ADMIN}
-        APACHE_SERVER_NAME: ${APACHE_SERVER_NAME}
+        APACHE_SERVER_ADMIN: ${APACHE_SERVER_ADMIN:-vscode@localhost}
+        APACHE_SERVER_NAME: ${APACHE_SERVER_NAME:-metaserver}
+    env_file:
+      - ./.env
+    labels:
+      - traefik.enable=true
+
+      - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.metaserver-http.entrypoints=http
+      - traefik.http.routers.metaserver-http.middlewares=https-redirect
+
+      - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.metaserver-https.entrypoints=https
+      - traefik.http.routers.metaserver-https.tls=true
+      # - traefik.http.routers.metaserver-https.tls.certresolver=le
+      - traefik.http.routers.metaserver-https.service=metaserver-service
+      - traefik.http.services.metaserver-service.loadbalancer.server.port=80
     restart: unless-stopped
     depends_on:
       - mysql
@@ -53,11 +135,11 @@ services:
       - DB_USER=${DB_USER:-metaserver}
       - DB_PWD=${DB_PWD:-metaserver}
       - DB_NAME=${DB_NAME:-metaserver}
-    ports:
-      - "80:80"
-      - "443:443"
     networks:
       - devel
+
+volumes:
+  traefik-public-certificates:
 
 networks:
   devel:

@@ -76,6 +76,13 @@ production()
     a2ensite metaserver
 }
 
+using-reverse-proxy()
+{
+    echo "==> Using reverse proxy"
+    envsubst < /etc/apache2/sites-available/metaserver.conf.template > /etc/apache2/sites-available/metaserver.conf
+    a2ensite metaserver
+}
+
 # Apache gets grumpy about PID files pre-existing
 # rm -f /usr/local/apache2/logs/httpd.pid
 
@@ -99,8 +106,8 @@ if [ ! -x /usr/sbin/apache2 ]; then
     exit 1
 fi
 
-echo "==> Production environment"
+echo "==> Starting Apache"
 upstream
-production
+using-reverse-proxy
 
 exec apache2 -DFOREGROUND "$@"
