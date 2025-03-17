@@ -1,8 +1,8 @@
 #!/bin/bash
 
-curl -X POST http://localhost/meta_update.php \
-     -d "hostname=crossfire.local" \
-     -d "port=8888" \
+curl -X POST https://metaserver.cross-fire.org/meta_update.php  \
+     -d "hostname=c-98-61-28-198.hsd1.mn.comcast.net" \
+     -d "port=9000" \
      -d "html_comment=This is an HTML comment" \
      -d "text_comment=This is a text comment" \
      -d "archbase=Archetypes base description" \
