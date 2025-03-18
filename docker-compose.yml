@@ -4,7 +4,7 @@ services:
     image: traefik:3
     container_name: metaserver-traefik
     environment:
-      - TZ=America/Chicago
+      - TZ=${TZ}
     ports:
       - 80:80
       - 443:443
@@ -116,14 +116,13 @@ services:
       - DB_NAME=${DB_NAME}
       - APACHE_SERVER_ADMIN=${APACHE_SERVER_ADMIN}
       - APACHE_SERVER_NAME=${APACHE_SERVER_NAME}
+      - TZ=${TZ}
     labels:
       - traefik.enable=true
 
-      # - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`)
       - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`) && Path(`/meta_update.php`)
       - traefik.http.routers.metaserver-http.entrypoints=http
 
-      # - traefik.http.routers.metaserver-http.middlewares=https-redirect
       - traefik.http.routers.metaserver-http.middlewares=
 
       - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN?Variable not set}`)
@@ -143,7 +142,5 @@ networks:
 volumes:
   crossfire-metaserver-mysql-data:
     driver: local
-  # crossfire-metaserver-html-files:
-  #   driver: local
   traefik-public-certificates:
     driver: local
