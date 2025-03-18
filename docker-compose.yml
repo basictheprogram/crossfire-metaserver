@@ -120,12 +120,12 @@ services:
     labels:
       - traefik.enable=true
 
-      - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`) && Path(`/meta_update.php`)
+      - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`, `metaserver.us.${DOMAIN?Variable not set}`) && Path(`/meta_update.php`)
       - traefik.http.routers.metaserver-http.entrypoints=http
 
       - traefik.http.routers.metaserver-http.middlewares=
 
-      - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN?Variable not set}`, `metaserver.us.${DOMAIN?Variable not set}`)
       - traefik.http.routers.metaserver-https.entrypoints=https
       - traefik.http.routers.metaserver-https.tls=true
       - traefik.http.routers.metaserver-https.tls.certresolver=le
