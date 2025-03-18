@@ -93,7 +93,7 @@ services:
       - MYSQL_USER=${MYSQL_USER:-metaserver}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-metaserver}
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$MYSQL_PASSWORD"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $MYSQL_USER --password=$MYSQL_PASSWORD"]
       interval: 30s
       timeout: 10s
       retries: 5
