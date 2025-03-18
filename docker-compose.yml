@@ -1,9 +1,85 @@
 ---
 services:
+  traefik:
+    image: traefik:3
+    container_name: metaserver-traefik
+    environment:
+      - TZ=America/Chicago
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    labels:
+      # Traefik configuration
+      - traefik.enable=true
+      - traefik.docker.network=metaserver
+      - traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080
+
+      # HTTP router configuration
+      - traefik.http.routers.traefik-dashboard-http.entrypoints=http
+      - traefik.http.routers.traefik-dashboard-http.rule=Host(`traefik.${DOMAIN?Variable not set}`)
+
+      # HTTPS router configuration (without certresolver)
+      - traefik.http.routers.traefik-dashboard-https.entrypoints=https
+      - traefik.http.routers.traefik-dashboard-https.rule=Host(`traefik.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.traefik-dashboard-https.tls=true
+      - traefik.http.routers.traefik-dashboard-https.tls.certresolver=le
+      - traefik.http.routers.traefik-dashboard-https.service=api@internal
+
+      # HTTPS redirect middleware
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+      - traefik.http.routers.traefik-dashboard-http.middlewares=https-redirect
+
+      # HTTP Basic Auth middleware
+      - traefik.http.middlewares.admin-auth.basicauth.users=${USERNAME?Variable not set}:${HASHED_PASSWORD?Variable not set}
+      - traefik.http.routers.traefik-dashboard-https.middlewares=admin-auth
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+      - traefik-public-certificates:/certificates
+      - /var/log/traefik/:/var/log/traefik/
+    command:
+      # Docker provider configuration
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+
+      # Entrypoints configuration
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+      - --entrypoints.http.forwardedHeaders.trustedIPs=0.0.0.0/0
+      - --entrypoints.http.proxyProtocol.trustedIPs=0.0.0.0/0
+
+      # Let's Encrypt configuration
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL?Variable not set}
+      - --certificatesresolvers.le.acme.storage=/certificates/acme.json
+      - --certificatesresolvers.le.acme.tlschallenge=true
+
+      # Logging and API configuration
+      - --accesslog.filepath=/var/log/traefik/access.log
+      - --accesslog.format=json
+      - --accesslog.fields.defaultmode=keep
+      - --accesslog.fields.headers.defaultmode=keep
+      - --accesslog.fields.names.ClientHost=keep
+      - --accesslog.fields.names.RequestAddr=keep
+      - --accesslog.fields.names.RequestMethod=keep
+      - --accesslog.fields.names.RequestPath=keep
+      - --accesslog.fields.names.RequestProtocol=keep
+      - --accesslog.fields.names.ResponseStatus=keep
+      - --accesslog.fields.names.Duration=keep
+      - --accesslog.fields.names.Referer=keep
+      - --accesslog.fields.names.RequestUserAgent=keep
+      - --accesslog.fields.names.StartUTC=drop
+      - --accesslog.fields.names.StartLocal=keep
+      - --log.level=INFO
+      - --api
+    networks:
+      - metaserver
+
   mysql:
-    container_name: crossfire-metaserver-mysql
+    container_name: metaserver-mysql
     image: mysql:lts
-    restart: unless-stopped
+    restart: always
     volumes:
       - crossfire-metaserver-mysql-data:/var/lib/mysql
       - ./.devcontainer/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
@@ -14,7 +90,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$MYSQL_PASSWORD"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -24,15 +100,14 @@ services:
       - metaserver
 
   www:
-    container_name: crossfire-metaserver-www
+    container_name: metaserver-www
     image: basictheprogram/crossfire-metaserver-www
-    restart: unless-stopped
+    restart: always
     depends_on:
       - mysql
-      - certbot
-    volumes:
-      - crossfire-metaserver-html-files:/var/www/html/:cached
-      - crossfire-metaserver-letsencrypt:/etc/letsencrypt
+      - traefik
+    # volumes:
+    #   - crossfire-metaserver-html-files:/var/www/html/:cached
     environment:
       # Did to populate the environment? export $(grep -v '^#' .env | xargs)
       - DB_HOST=${DB_HOST}
@@ -41,28 +116,22 @@ services:
       - DB_NAME=${DB_NAME}
       - APACHE_SERVER_ADMIN=${APACHE_SERVER_ADMIN}
       - APACHE_SERVER_NAME=${APACHE_SERVER_NAME}
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - metaserver
+    labels:
+      - traefik.enable=true
 
-  # Using "cerbot certonly --standalone ..." Certbot temporarily runs its own
-  # lightweight web server to respond to Let's Encrypt's HTTP-01 challenge on
-  # port 80.
-  certbot:
-    container_name: crossfire-metaserver-certbot
-    image: basictheprogram/crossfire-metaserver-certbot
-    entrypoint: []
-    volumes:
-      - crossfire-metaserver-html-files:/var/www/html/:cached
-      - crossfire-metaserver-letsencrypt:/etc/letsencrypt
-    environment:
-      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
-      - CERTBOT_DOMAIN=${CERTBOT_DOMAIN}
-    ports:
-      - "80:80"
-    restart: "no"
+      # - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`) && Path(`/meta_update.php`)
+      - traefik.http.routers.metaserver-http.entrypoints=http
+
+      # - traefik.http.routers.metaserver-http.middlewares=https-redirect
+      - traefik.http.routers.metaserver-http.middlewares=
+
+      - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.metaserver-https.entrypoints=https
+      - traefik.http.routers.metaserver-https.tls=true
+      - traefik.http.routers.metaserver-https.tls.certresolver=le
+      - traefik.http.routers.metaserver-https.service=metaserver-service
+      - traefik.http.services.metaserver-service.loadbalancer.server.port=80
     networks:
       - metaserver
 
@@ -74,7 +143,7 @@ networks:
 volumes:
   crossfire-metaserver-mysql-data:
     driver: local
-  crossfire-metaserver-html-files:
-    driver: local
-  crossfire-metaserver-letsencrypt:
+  # crossfire-metaserver-html-files:
+  #   driver: local
+  traefik-public-certificates:
     driver: local

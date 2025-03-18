@@ -2,7 +2,7 @@
 "on":
   push:
     branches:
-      - vscode-devcontainer
+      - traefik-3
   pull_request:
     branches:
       - main
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [www, certbot]
+        service: [www]
 
     steps:
       - name: Checkout repository
