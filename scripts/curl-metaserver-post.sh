@@ -1,10 +1,10 @@
 #!/bin/bash
 
-curl -X POST https://metaserver.cross-fire.org/meta_update.php  \
+curl -X POST http://metaserver.us.cross-fire.org/meta_update.php  \
      -d "hostname=c-98-61-28-198.hsd1.mn.comcast.net" \
      -d "port=9000" \
-     -d "html_comment=This is an HTML comment" \
-     -d "text_comment=This is a text comment" \
+     -d "html_comment=This is an HTML comment with curl" \
+     -d "text_comment=This is a text comment with curl" \
      -d "archbase=Archetypes base description" \
      -d "mapbase=Maps base description" \
      -d "codebase=Server code base description" \
