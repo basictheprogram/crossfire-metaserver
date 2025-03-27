@@ -5,7 +5,7 @@
       - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-push:
@@ -35,15 +35,3 @@ jobs:
             --tag ${{ secrets.DOCKER_USERNAME }}/crossfire-metaserver-${{ matrix.service }}:latest \
             --push=${{ github.event_name != 'pull_request' }} \
             .
-      - name: Build Docker image
-        run: |
-          docker-compose -f docker-compose.yml build
-
-      - name: Tag and Push Docker images
-        run: |
-          for SERVICE in crossfire-metaserver_www; do
-            IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/$SERVICE
-            IMAGE_TAG=latest
-            docker tag $SERVICE $IMAGE_NAME:$IMAGE_TAG
-            docker push $IMAGE_NAME:$IMAGE_TAG
-          done
