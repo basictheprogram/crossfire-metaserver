@@ -120,16 +120,27 @@ services:
     labels:
       - traefik.enable=true
 
-      - traefik.http.routers.metaserver-http.rule=(Host(`metaserver.${DOMAIN?Variable not set}`) || Host(`metaserver.us.${DOMAIN?Variable not set}`)) && Path(`/meta_update.php`)
+      # Allow HTTP only for /meta_update.php
+      - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`, `metaserver.us.${DOMAIN?Variable not set}`) && Path(`/meta_update.php`)
       - traefik.http.routers.metaserver-http.entrypoints=http
+      - traefik.http.routers.metaserver-http.service=metaserver-service
 
-      - traefik.http.routers.metaserver-http.middlewares=
+      # Redirect all other HTTP traffic to HTTPS
+      - traefik.http.routers.metaserver-http-redir.rule=Host(`metaserver.${DOMAIN?Variable not set}`, `metaserver.us.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.metaserver-http-redir.entrypoints=http
+      - traefik.http.routers.metaserver-http-redir.middlewares=https-redirect
 
-      - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN?Variable not set}`) || Host(`metaserver.us.${DOMAIN?Variable not set}`)
+      # Middleware for redirecting HTTP to HTTPS
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+
+      # HTTPS configuration
+      - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN?Variable not set}`, `metaserver.us.${DOMAIN?Variable not set}`)
       - traefik.http.routers.metaserver-https.entrypoints=https
       - traefik.http.routers.metaserver-https.tls=true
       - traefik.http.routers.metaserver-https.tls.certresolver=le
       - traefik.http.routers.metaserver-https.service=metaserver-service
+
+      # Define the backend service
       - traefik.http.services.metaserver-service.loadbalancer.server.port=80
     networks:
       - metaserver
