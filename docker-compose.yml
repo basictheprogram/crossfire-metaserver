@@ -17,11 +17,11 @@ services:
 
       # HTTP router configuration
       - traefik.http.routers.traefik-dashboard-http.entrypoints=http
-      - traefik.http.routers.traefik-dashboard-http.rule=Host(`traefik.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.traefik-dashboard-http.rule=Host(`traefik.${DOMAIN}`)
 
       # HTTPS router configuration (without certresolver)
       - traefik.http.routers.traefik-dashboard-https.entrypoints=https
-      - traefik.http.routers.traefik-dashboard-https.rule=Host(`traefik.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.traefik-dashboard-https.rule=Host(`traefik.${DOMAIN}`)
       - traefik.http.routers.traefik-dashboard-https.tls=true
       - traefik.http.routers.traefik-dashboard-https.tls.certresolver=le
       - traefik.http.routers.traefik-dashboard-https.service=api@internal
@@ -32,7 +32,7 @@ services:
       - traefik.http.routers.traefik-dashboard-http.middlewares=https-redirect
 
       # HTTP Basic Auth middleware
-      - traefik.http.middlewares.admin-auth.basicauth.users=${USERNAME?Variable not set}:${HASHED_PASSWORD?Variable not set}
+      - traefik.http.middlewares.admin-auth.basicauth.users=${USERNAME}:${HASHED_PASSWORD}
       - traefik.http.routers.traefik-dashboard-https.middlewares=admin-auth
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -51,7 +51,7 @@ services:
       - --entrypoints.http.proxyProtocol.trustedIPs=0.0.0.0/0
 
       # Let's Encrypt configuration
-      - --certificatesresolvers.le.acme.email=${ACME_EMAIL?Variable not set}
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
       - --certificatesresolvers.le.acme.storage=/certificates/acme.json
       - --certificatesresolvers.le.acme.tlschallenge=true
 
@@ -120,22 +120,28 @@ services:
     labels:
       - traefik.enable=true
 
-      # Allow HTTP only for /meta_update.php
-      - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN?Variable not set}`) || Host(`metaserver.us.${DOMAIN?Variable not set}`) && Path(`/meta_update.php`)
+      # Allow HTTP and HTTPS for /meta_client.php, /meta_html.php, /meta_update.php
+      - traefik.http.routers.metaserver-http.rule=Host(`metaserver.${DOMAIN}`) || Host(`metaserver.us.${DOMAIN}`) && Path(`/meta_client.php`, `/meta_html.php`, `/meta_update.php`)
       - traefik.http.routers.metaserver-http.entrypoints=http
       - traefik.http.routers.metaserver-http.service=metaserver-service
 
-      # Redirect all other HTTP traffic to HTTPS
-      - traefik.http.routers.metaserver-http-redir.rule=Host(`metaserver.${DOMAIN?Variable not set}`) || Host(`metaserver.us.${DOMAIN?Variable not set}`)
-      - traefik.http.routers.metaserver-http-redir.entrypoints=http
-      - traefik.http.routers.metaserver-http-redir.middlewares=https-redirect@docker
-
-      # HTTPS configuration
-      - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN?Variable not set}`) || Host(`metaserver.us.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.metaserver-https.rule=Host(`metaserver.${DOMAIN}`) || Host(`metaserver.us.${DOMAIN}`) && Path(`/meta_client.php`, `/meta_html.php`, `/meta_update.php`)
       - traefik.http.routers.metaserver-https.entrypoints=https
       - traefik.http.routers.metaserver-https.tls=true
       - traefik.http.routers.metaserver-https.tls.certresolver=le
       - traefik.http.routers.metaserver-https.service=metaserver-service
+
+      # Allow only HTTPS for /v2/meta_client.php, /v2/meta_html.php, /v2/meta_update.php
+      - traefik.http.routers.metaserver-v2-https.rule=Host(`metaserver.${DOMAIN}`) || Host(`metaserver.us.${DOMAIN}`) && PathPrefix(`/v2/meta_client.php`, `/v2/meta_html.php`, `/v2/meta_update.php`)
+      - traefik.http.routers.metaserver-v2-https.entrypoints=https
+      - traefik.http.routers.metaserver-v2-https.tls=true
+      - traefik.http.routers.metaserver-v2-https.tls.certresolver=le
+      - traefik.http.routers.metaserver-v2-https.service=metaserver-service
+
+      # Redirect all other HTTP traffic to HTTPS
+      - traefik.http.routers.metaserver-http-redir.rule=Host(`metaserver.${DOMAIN}`) || Host(`metaserver.us.${DOMAIN}`)
+      - traefik.http.routers.metaserver-http-redir.entrypoints=http
+      - traefik.http.routers.metaserver-http-redir.middlewares=https-redirect@docker
 
       # Define the backend service
       - traefik.http.services.metaserver-service.loadbalancer.server.port=80
